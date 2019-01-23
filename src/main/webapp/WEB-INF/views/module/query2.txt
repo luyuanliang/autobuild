@@ -1,0 +1,107 @@
+#set($entityName = $buildCodeRequest.getEntityNameDO().getEntityName())
+#set($upperEntityName = $buildCodeRequest.getEntityNameDO().getUpperEntityName())
+#set($domainEntityName = $buildCodeRequest.getEntityNameDO().getDomainEntityName())
+#set($upperDomainEntityName = $buildCodeRequest.getEntityNameDO().getUpperDomainEntityName())
+#set($queryEntityName = $buildCodeRequest.getEntityNameDO().getQueryEntityName())
+#set($upperQueryEntityName = $buildCodeRequest.getEntityNameDO().getUpperQueryEntityName())
+package $buildCodeRequest.getPackageInfoDO().getQueryPackage();
+
+import java.util.Date;
+import java.util.List;
+import java.util.ArrayList;
+
+public class $upperQueryEntityName extends QueryBase {
+
+#foreach ($column in $buildCodeRequest.list)
+	#set($codeAttributeDO = $buildCodeRequest.map.get($column))
+	#if($codeAttributeDO.getEqualSupport().equals("YES"))
+
+	private $codeAttributeDO.getAttributeType() $codeAttributeDO.getAttributeName();
+	#end
+	#if($codeAttributeDO.getIndistinctSupport().equals("YES"))
+
+	private $codeAttributeDO.getAttributeType() indistinct$codeAttributeDO.getUpperAttributeName();
+	#end
+	#if($codeAttributeDO.getCompareSupport().equals("YES"))
+
+	private $codeAttributeDO.getAttributeType() moreThan$codeAttributeDO.getUpperAttributeName();
+	private $codeAttributeDO.getAttributeType() lessThan$codeAttributeDO.getUpperAttributeName();
+	private $codeAttributeDO.getAttributeType() equalAndMoreThan$codeAttributeDO.getUpperAttributeName();
+	private $codeAttributeDO.getAttributeType() equalAndLessThan$codeAttributeDO.getUpperAttributeName();
+	#end
+	#if($codeAttributeDO.getInSupport().equals("YES"))
+
+	private List < $codeAttributeDO.getAttributeType() > $codeAttributeDO.getAttributeName()List;
+	#end	
+#end
+
+
+#foreach ($column in $buildCodeRequest.list)
+	#set($codeAttributeDO = $buildCodeRequest.map.get($column))
+	#if($codeAttributeDO.getEqualSupport().equals("YES"))
+
+	public void set$codeAttributeDO.getUpperAttributeName()($codeAttributeDO.getAttributeType() $codeAttributeDO.getAttributeName()){
+		this.$codeAttributeDO.getAttributeName() = $codeAttributeDO.getAttributeName();
+	}
+
+	public $codeAttributeDO.getAttributeType() get$codeAttributeDO.getUpperAttributeName()(){
+		return $codeAttributeDO.getAttributeName();
+	}
+	#end
+	#if($codeAttributeDO.getIndistinctSupport().equals("YES"))
+
+	public void setIndistinct$codeAttributeDO.getUpperAttributeName()($codeAttributeDO.getAttributeType() indistinct$codeAttributeDO.getUpperAttributeName()){
+		this.indistinct$codeAttributeDO.getUpperAttributeName() = indistinct$codeAttributeDO.getUpperAttributeName();
+	}
+
+	public $codeAttributeDO.getAttributeType() getIndistinct$codeAttributeDO.getUpperAttributeName()(){
+		return indistinct$codeAttributeDO.getUpperAttributeName();
+	}
+	#end
+	#if($codeAttributeDO.getCompareSupport().equals("YES"))
+
+	public void setMoreThan$codeAttributeDO.getUpperAttributeName()($codeAttributeDO.getAttributeType() moreThan$codeAttributeDO.getUpperAttributeName()){
+		this.moreThan$codeAttributeDO.getUpperAttributeName() = moreThan$codeAttributeDO.getUpperAttributeName();
+	}
+
+	public $codeAttributeDO.getAttributeType() getMoreThan$codeAttributeDO.getUpperAttributeName()(){
+		return moreThan$codeAttributeDO.getUpperAttributeName();
+	}
+
+	public void setLessThan$codeAttributeDO.getUpperAttributeName()($codeAttributeDO.getAttributeType() lessThan$codeAttributeDO.getUpperAttributeName()){
+		this.lessThan$codeAttributeDO.getUpperAttributeName() = lessThan$codeAttributeDO.getUpperAttributeName();
+	}
+
+	public $codeAttributeDO.getAttributeType() getLessThan$codeAttributeDO.getUpperAttributeName()(){
+		return lessThan$codeAttributeDO.getUpperAttributeName();
+	}
+
+	public void setEqualAndMoreThan$codeAttributeDO.getUpperAttributeName()($codeAttributeDO.getAttributeType() equalAndMoreThan$codeAttributeDO.getUpperAttributeName()){
+		this.equalAndMoreThan$codeAttributeDO.getUpperAttributeName() = equalAndMoreThan$codeAttributeDO.getUpperAttributeName();
+	}
+
+	public $codeAttributeDO.getAttributeType() getEqualAndMoreThan$codeAttributeDO.getUpperAttributeName()(){
+		return equalAndMoreThan$codeAttributeDO.getUpperAttributeName();
+	}
+
+	public void setEqualAndLessThan$codeAttributeDO.getUpperAttributeName()($codeAttributeDO.getAttributeType() equalAndLessThan$codeAttributeDO.getUpperAttributeName()){
+		this.equalAndLessThan$codeAttributeDO.getUpperAttributeName() = equalAndLessThan$codeAttributeDO.getUpperAttributeName();
+	}
+
+	public $codeAttributeDO.getAttributeType() getEqualAndLessThan$codeAttributeDO.getUpperAttributeName()(){
+		return equalAndLessThan$codeAttributeDO.getUpperAttributeName();
+	}
+	#end
+	#if($codeAttributeDO.getInSupport().equals("YES"))
+
+	public void set$codeAttributeDO.getUpperAttributeName()(List<$codeAttributeDO.getAttributeType()> $codeAttributeDO.getAttributeName()List){
+		this.$codeAttributeDO.getAttributeName()List = $codeAttributeDO.getAttributeName()List;
+	}
+
+	public List<$codeAttributeDO.getAttributeType()> get$codeAttributeDO.getUpperAttributeName()List(){
+		return $codeAttributeDO.getAttributeName()List;
+	}
+	#end	
+#end
+
+}

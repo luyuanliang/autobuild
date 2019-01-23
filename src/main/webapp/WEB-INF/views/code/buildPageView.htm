@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Basic SearchBox - jQuery EasyUI Demo</title>
+	<link rel="stylesheet" type="text/css" href="../easyui/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="../easyui/themes/icon.css">
+	<link rel="stylesheet" type="text/css" href="../easyui/demo.css">
+	<script type="text/javascript" src="../easyui/jquery.min.js"></script>
+	<script type="text/javascript" src="../easyui/jquery.easyui.min.js"></script>
+	<script>
+
+	function searchRecords(){	
+		$('#recordGrid').datagrid({
+			loadMsg: '正在加载信息...',
+			type : 'post',
+			queryParams: {
+			mark: $('#mark').val()
+			},
+			url:'queryPageInfo.do?',
+		});
+		 
+	}
+
+	function buildCode(){	
+		$('#recordGrid').datagrid({
+			loadMsg: '正在加载信息...',
+			type : 'post',
+			queryParams: {
+			mark: $('#mark').val(),
+			webName: $('#webName').val(),
+			moduleName: $('#moduleName').val(),
+			actionName: $('#actionName').val(),
+			primaryKey: $('#primaryKey').val(),
+			output: $('#output').val(),
+			},
+			url:'buildPage.do?',
+		});
+		 
+	}
+	
+
+	function onLoadSuccess(data){
+		var rows =  $('#recordGrid').datagrid("getRows");
+    	for(var i=0; i<rows.length; i++){
+    	}
+	}
+
+	$(function () {
+		$(".panel-noscroll")
+			.css({
+				top: 0,
+				right: 0,
+				bottom: 0,
+				left: 0
+			});
+			
+		$(".panel.datagrid.easyui-fluid").css('width', '100%') 
+			.find('.panel-header').css('width', '100%').end()
+			.find('.datagrid-wrap.panel-body').css('width', '100%')
+			.find('.datagrid-view').css('width', '100%');
+	});
+	
+	function download2(){
+		var mark = $('#mark').val();
+		var tableName =  $('#tableName').val();
+		window.location.href="/autobuild/page/download.zip?mark="+mark+"&tableName="+tableName;
+	}
+	
+	</script>
+</head>
+<body>
+
+	<div style="margin: 0px 0 0px 0; margin: 0px; position: absolute; top:0; right:0;bottom: 0; left: 0;">
+		<table id="recordGrid" class="easyui-datagrid" title="DataGrid Complex Toolbar" style="width:100%;height:870px;padding:0px;margin:0 0 0 0;"
+				data-options="rownumbers:true,onLoadSuccess: onLoadSuccess,remoteSort:false,checkOnSelect:false,pagination:true,singleSelect:true,url:'',method:'post',toolbar:'#condition'">
+			<thead>
+				<tr>
+					<th data-options="field:'attribute',width:50" sortable="true"  width="10%">attribute</th>
+					<th data-options="field:'alias',editor:'text',width:50" sortable="true" width="10%">alias</th>
+					<th data-options="field:'length',editor:'text',width:50" sortable="true" width="10%">length</th>
+					<th data-options="field:'supportList',width:50" sortable="true"  width="10%">SupportList</th>
+					<th data-options="field:'supportQuery',width:50" sortable="true"  width="10%">SupportQuery</th>
+					<th data-options="field:'supportDetail',width:50" sortable="true"  width="10%">SupportDetail</th>
+					<th data-options="field:'supportUpdate',width:50" sortable="true"  width="10%">SupportUpdate</th>						
+					<th data-options="field:'supportAdd',width:50" sortable="true" width="10%">SupportAdd</th>
+					<th data-options="field:'type',width:50" sortable="true" width="10%">Type</th>
+					</tr>
+
+			</thead>
+		</table>
+		<div id="condition" class="container_12" style="position:relative;padding:0px;">
+			<div style="height:10px;" >
+			</div>
+			<span>mark:</span>
+			<input id="mark" class="easyui-textbox" data-options="iconWidth:30,prompt:''" style="width:150px;padding:2px;">
+			<span>web名称:</span>
+			<input id="webName" class="easyui-textbox" value="helloview" data-options="required:true" style="width:150px;padding:2px;">	
+			<span>module名称:</span>
+			<input id="moduleName" class="easyui-textbox" value="member" data-options="required:true" style="width:150px;padding:2px;">	
+			<span>action:</span>
+			<input id="actionName" class="easyui-textbox" value="user" data-options="required:true" style="width:150px;padding:2px;">	
+			<span>primary:</span>
+			<input id="primaryKey" class="easyui-textbox" value="userId" data-options="required:true" style="width:150px;padding:2px;">
+			<span>output:</span>
+			<input id="output" class="easyui-textbox" value="D:/output/" data-options="required:true" style="width:150px;padding:2px;">
+			<div>
+				<div style="height:10px;" >
+				</div>
+				<div>
+					<a id="search" class="easyui-linkbutton" data-options="iconCls:'icon-search'" style="width:80px;" onclick="searchRecords()">Search</a>
+					<a id="search" class="easyui-linkbutton" data-options="iconCls:'icon-search'" style="width:80px;" onclick="buildCode()">创建</a>
+					<a id="search" class="easyui-linkbutton" data-options="iconCls:'icon-search'" style="width:80px;" onclick="download2()">下载</a>
+				</div>	
+			</div>
+			<div style="height:10px;" >
+			</div>
+		</div>
+	</div>
+	
+</body>
+</html>

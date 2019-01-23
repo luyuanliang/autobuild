@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+#set($entityName = $buildCodeRequest.getEntityNameDO().getEntityName())
+#set($upperEntityName = $buildCodeRequest.getEntityNameDO().getUpperEntityName())
+#set($domainEntityName = $buildCodeRequest.getEntityNameDO().getDomainEntityName())
+#set($upperDomainEntityName = $buildCodeRequest.getEntityNameDO().getUpperDomainEntityName())
+#set($queryEntityName = $buildCodeRequest.getEntityNameDO().getQueryEntityName())
+#set($upperQueryEntityName = $buildCodeRequest.getEntityNameDO().getUpperQueryEntityName())
+#set($list = $buildCodeRequest.getList())
+#set($map = $buildCodeRequest.getMap())
+
+<mapper namespace="$buildCodeRequest.getPackageInfoDO().getDaoPackage()$dot$buildCodeRequest.getEntityNameDO().getUpperDaoEntityName()">
+
+    <resultMap id="$upperDomainEntityName" type = "$buildCodeRequest.getPackageInfoDO().getDomainPackage()$dot$upperDomainEntityName">
+        <id column="$buildCodeRequest.getPrimaryCodeAttributeDO().getColumnName()" property="$buildCodeRequest.getPrimaryCodeAttributeDO().getAttributeName()" />
+#foreach ($column in $list)
+#set($codeAttributeDO = $map.get($column))
+#if($$buildCodeRequest.getPrimaryCodeAttributeDO().getColumnName()!=$column)
+		<result column="$column"  property="$codeAttributeDO.getAttributeName()"  />
+#end
+#end
+    </resultMap>
+
+    <sql id="all_columns">#set($count=1)
+
+		#foreach ($column in $list)#if($count!=$list.size()) $column , #else$column#end#set($count=$count+1)#end
+
+	</sql>
+
+    <sql id="query_condition">
+#foreach ($column in $list)
+#set($codeAttributeDO = $map.get($column))
+#if($SUPPORT.equals($codeAttributeDO.getEqualSupport()))
+		<if test = "$codeAttributeDO.getAttributeName() != null " ><![CDATA[ AND $codeAttributeDO.getColumnName() = #{$codeAttributeDO.getAttributeName()}]]></if>		
+#end
+#if($SUPPORT.equals($codeAttributeDO.getIndistinctSupport()))
+		<if test = "indistinct$codeAttributeDO.getUpperAttributeName() != null " ><![CDATA[ AND $column LIKE concat(concat('%',#{indistinct$codeAttributeDO.getUpperAttributeName()}),'%')]]></if>		
+#end
+#if($SUPPORT.equals($codeAttributeDO.getInSupport()))
+		<if test = "$codeAttributeDO.getAttributeName()List != null and $codeAttributeDO.getAttributeName()List.size()>0" >
+			AND $column IN 
+			<foreach item="item" index="index" collection="$codeAttributeDO.getAttributeName()List" open="(" separator="," close=")"> 
+			#{item} 
+			</foreach>
+		</if>
+#end
+#if($SUPPORT.equals($codeAttributeDO.getCompareSupport()))
+	    <if test = "lessThan$codeAttributeDO.getUpperAttributeName() != null " ><![CDATA[ AND $column < #{lessThan$codeAttributeDO.getUpperAttributeName()}]]></if>
+        <if test = "equalAndLessThan$codeAttributeDO.getUpperAttributeName() != null " ><![CDATA[ AND $column <= #{equalAndLessThan$codeAttributeDO.getUpperAttributeName()}]]></if>
+        <if test = "moreThan$codeAttributeDO.getUpperAttributeName() != null " ><![CDATA[ AND $column > #{moreThan$codeAttributeDO.getUpperAttributeName()}]]></if>
+        <if test = "equalAndMoreThan$codeAttributeDO.getUpperAttributeName() != null " ><![CDATA[ AND $column >= #{equalAndMoreThan$codeAttributeDO.getUpperAttributeName()}]]></if>
+#end
+#end
+    </sql>
+
+    <insert id="$buildCodeRequest.getEntityNameDO().getInsertMethod()" parameterType="$buildCodeRequest.getPackageInfoDO().getDomainPackage()$dot$upperDomainEntityName" useGeneratedKeys="true" keyProperty="$buildCodeRequest.getPrimaryCodeAttributeDO().getAttributeName()">
+		INSERT INTO $buildCodeRequest.getEntityNameDO().getTableName() (<include refid="all_columns" />) VALUES
+		(
+		#set($count=1)#foreach($column in $list)#set($codeAttributeDO = $map.get($column))#if($count!=$list.size())
+#{$codeAttributeDO.getAttributeName()} , #else#{$codeAttributeDO.getAttributeName()}#end#set($count=$count+1)#end
+
+		)
+    </insert>
+
+	
+    <select id="$buildCodeRequest.getEntityNameDO().getQueryListMethod()" resultMap="$upperDomainEntityName" parameterType="$buildCodeRequest.getPackageInfoDO().getQueryPackage().$upperQueryEntityName">
+        SELECT <include refid="all_columns" /> FROM $buildCodeRequest.getEntityNameDO().getTableName()
+		<where>
+			  <include refid="query_condition"/>
+		</where>
+		<if test="orderByClause !=null" > ORDER BY ${orderByClause}</if>
+		<!-- add order or query info. -->
+		<![CDATA[
+
+		]]>
+		
+		<if test="startNum != null" > LIMIT #{startNum},#{pageSize}</if>
+    </select>
+
+	
+    <select id="$buildCodeRequest.getEntityNameDO().getCountMethod()" resultType="int" parameterType="$buildCodeRequest.getPackageInfoDO().getQueryPackage().$upperQueryEntityName">
+		SELECT COUNT(1) FROM $buildCodeRequest.getEntityNameDO().getTableName()
+		<where>
+			  <include refid="query_condition"/>
+		</where>
+
+		<!-- add order or query info. -->
+		<![CDATA[
+
+		]]>
+    </select>
+
+    <select id="selectDistinctList" resultType="String" parameterType="$buildCodeRequest.getPackageInfoDO().getQueryPackage().$upperQueryEntityName">
+        SELECT DISTINCT( ${distinct} ) FROM  $buildCodeRequest.getEntityNameDO().getTableName() <where>  <include refid="query_condition"/> 	</where>
+    </select>
+
+    <select id="$buildCodeRequest.getEntityNameDO().getQueryByIdMethod()" resultMap="$upperDomainEntityName" parameterType="$buildCodeRequest.getPrimaryCodeAttributeDO().getAttributeType()">
+        SELECT <include refid="all_columns" /> FROM $buildCodeRequest.getEntityNameDO().getTableName() WHERE $buildCodeRequest.getPrimaryCodeAttributeDO().getColumnName() = #{$buildCodeRequest.getPrimaryCodeAttributeDO().getAttributeName()}
+    </select>
+
+    <update id="$buildCodeRequest.getEntityNameDO().getUpdateMethod()" parameterType="$buildCodeRequest.getPackageInfoDO().getDomainPackage()$dot$upperDomainEntityName">
+        UPDATE $buildCodeRequest.getEntityNameDO().getTableName()
+		<set>
+#if($buildCodeRequest.isHasUpdateVersion())
+			<![CDATA[ UPDATE_VERSION = UPDATE_VERSION+1 ,]]>
+#end
+#foreach ($column in $list)
+#set($codeAttributeDO = $map.get($column))
+#if($buildCodeRequest.getPrimaryCodeAttributeDO().getColumnName()!=$column&&"updateVersion"!=$codeAttributeDO.getAttributeName())
+			<if test="$codeAttributeDO.getAttributeName()!=null"><![CDATA[$column=#{$codeAttributeDO.getAttributeName()},]]></if>
+#end
+#end
+		</set>
+
+        <![CDATA[ WHERE  $buildCodeRequest.getPrimaryCodeAttributeDO().getColumnName() = #{$buildCodeRequest.getPrimaryCodeAttributeDO().getAttributeName()} ]]>
+#if($buildCodeRequest.isHasUpdateVersion())
+		<if test="updateVersion != null "><![CDATA[ and UPDATE_VERSION = #{updateVersion} ]]></if>
+#end
+
+      </update>
+
+</mapper>

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Basic SearchBox - jQuery EasyUI Demo</title>
+	<link rel="stylesheet" type="text/css" href="../easyui/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="../easyui/themes/icon.css">
+	<link rel="stylesheet" type="text/css" href="../easyui/demo.css">
+	<script type="text/javascript" src="../easyui/jquery.min.js"></script>
+	<script type="text/javascript" src="../easyui/jquery.easyui.min.js"></script>
+	<script>
+	$.extend($.fn.datagrid.methods, {
+			editCell: function(jq,param){
+				return jq.each(function(){
+					var opts = $(this).datagrid('options');
+					var fields = $(this).datagrid('getColumnFields',true).concat($(this).datagrid('getColumnFields'));
+					for(var i=0; i<fields.length; i++){
+						var col = $(this).datagrid('getColumnOption', fields[i]);
+						col.editor1 = col.editor;
+						if (fields[i] != param.field){
+							col.editor = null;
+						}
+					}
+					$(this).datagrid('beginEdit', param.index);
+                    var ed = $(this).datagrid('getEditor', param);
+                    if (ed){
+                        if ($(ed.target).hasClass('textbox-f')){
+                            $(ed.target).textbox('textbox').focus();
+                        } else {
+                            $(ed.target).focus();
+                        }
+                    }
+					for(var i=0; i<fields.length; i++){
+						var col = $(this).datagrid('getColumnOption', fields[i]);
+						col.editor = col.editor1;
+					}
+				});
+			},
+            enableCellEditing: function(jq){
+                return jq.each(function(){
+                    var dg = $(this);
+                    var opts = dg.datagrid('options');
+                    opts.oldOnClickCell = opts.onClickCell;
+                    opts.onClickCell = function(index, field){
+                        if (opts.editIndex != undefined){
+                            if (dg.datagrid('validateRow', opts.editIndex)){
+                                dg.datagrid('endEdit', opts.editIndex);
+                                opts.editIndex = undefined;
+                            } else {
+                                return;
+                            }
+                        }
+                        dg.datagrid('selectRow', index).datagrid('editCell', {
+                            index: index,
+                            field: field
+                        });
+                        opts.editIndex = index;
+                        opts.oldOnClickCell.call(this, index, field);
+                    }
+                });
+            }
+		});
+
+	$(function(){
+		$('#recordGrid').datagrid().datagrid('enableCellEditing');
+	})
+			
+	
+	function searchRecords(){	
+		$('#recordGrid').datagrid({
+			loadMsg: '正在加载信息...',
+			type : 'post',
+			queryParams: {
+			tableName: $('#tableName').val(),
+			url: $('#url').val(),
+			user: $('#user').val(),
+			password: $('#password').val(),
+			bathPath: $('#bathPath').val(),
+			daoPath: $('#daoPath').val(),
+			servicePath: $('#servicePath').val(),
+			outPut: $('#outPut').val(),
+			way: $('#way').combobox('getValue'),
+			mark: $('#mark').val()
+			},
+			url:'queryTableInfo.do?',
+		});
+	}
+
+	function buildCode(){	
+		var rows = $('#recordGrid').datagrid('getRows');
+		//获取当前页的数据行 
+		var total = 0; 
+		
+		var updateList="[";
+		for (var i = 0; i < rows.length; i++) { 
+			updateList = updateList + "{";
+			updateList = updateList + "\"column\"" +":\""+rows[i]['column']+ "\",";
+			updateList = updateList + "\"equalQuery\"" +":\""+rows[i]['equalQuery']+ "\",";
+			updateList = updateList + "\"inQuery\"" +":\""+rows[i]['inQuery']+ "\",";
+			updateList = updateList + "\"compareQuery\"" +":\""+rows[i]['compareQuery']+ "\",";
+			updateList = updateList + "\"indistinctQuery\"" +":\""+rows[i]['indistinctQuery']+ "\",";
+			updateList = updateList + "\"commonts\"" +":\""+rows[i]['commonts']+ "\"";
+			if(i==rows.length-1){
+				updateList = updateList + "}";
+			} else {
+				updateList = updateList + "},";
+			}
+			
+		} 
+		updateList = updateList + "]";
+		
+		$('#recordGrid').datagrid({
+			loadMsg: '正在加载信息...',
+			type : 'post',
+			queryParams: {
+			tableName: $('#tableName').val(),
+			url: $('#url').val(),
+			user: $('#user').val(),
+			password: $('#password').val(),
+			updateList:updateList,
+			basePackage: $('#basePackage').val(),
+			daoPackage: $('#daoPackage').val(),
+			queryPackage: $('#queryPackage').val(),
+			entityPackage: $('#entityPackage').val(),
+			servicePackage: $('#servicePackage').val(),
+			entitySuffix: $('#entitySuffix').val(),
+			queryPrefix: $('#queryPrefix').val(),
+			daoSuffix: $('#daoSuffix').val(),
+			createUser: $('#createUser').val(),
+			outPut: $('#outPut').val(),
+			mark: $('#mark').val(),
+			way: $('#way').combobox('getValue')						
+			},
+			url:'buildCode.do?',
+		});
+		 
+	}
+	
+	function download2(){
+		var mark = $('#mark').val();
+		var tableName =  $('#tableName').val();
+		window.location.href="/autobuild/code/download.zip?mark="+mark+"&tableName="+tableName;
+	}
+	
+	function onLoadSuccess(data){
+		var rows =  $('#recordGrid').datagrid("getRows");
+    	for(var i=0; i<rows.length; i++){
+    	}
+	}
+
+	
+	$(function () {
+		$(".panel-noscroll")
+			.css({
+				top: 0,
+				right: 0,
+				bottom: 0,
+				left: 0
+			});
+			
+		$(".panel.datagrid.easyui-fluid").css('width', '100%') 
+			.find('.panel-header').css('width', '100%').end()
+			.find('.datagrid-wrap.panel-body').css('width', '100%')
+			.find('.datagrid-view').css('width', '100%');
+	});
+	
+	</script>
+</head>
+<body>
+
+	<div style="margin: 0px 0 0px 0; margin: 0px; position: absolute; top:0; right:0;bottom: 0; left: 0;">
+		<table id="recordGrid" class="easyui-datagrid" title="DataGrid Complex Toolbar" style="width:100%;height:870px;padding:0px;margin:0 0 0 0;"
+				data-options="rownumbers:true,onLoadSuccess: onLoadSuccess,remoteSort:false,checkOnSelect:false,pagination:true,singleSelect:true,url:'',method:'post',toolbar:'#condition'">
+			<thead>
+				<tr>
+					<th data-options="field:'column',width:50" sortable="true"  width="10%">column</th>
+					<th data-options="field:'columnType',width:50" sortable="true" width="8%">columnType</th>
+					<th data-options="field:'attributeName',width:50" sortable="true" width="10%">attributeName</th>
+					<th data-options="field:'attributeType',width:50" sortable="true" width="8%">attributeType</th>
+					<th data-options="field:'equalQuery',width:50,
+						editor:{
+							type:'combobox',
+							options:{
+			                    valueField:'id',
+			                    textField:'text',
+			                    editable:false,
+			                    data:[
+			                        {id:'YES', text:'YES' },
+			                        {id:'NO', text:'NO' },
+			                    ]
+							}
+						}" 					
+					sortable="true"  width="5%">equal查询</th>					
+					<th data-options="field:'inQuery',width:50,
+						editor:{
+							type:'combobox',
+							options:{
+			                    valueField:'id',
+			                    textField:'text',
+			                    editable:false,
+			                    data:[
+			                        {id:'YES', text:'YES' },
+			                        {id:'NO', text:'NO' },
+			                    ]
+							}
+						}" 					
+					sortable="true"  width="5%">in查询</th>
+					<th data-options="field:'indistinctQuery',width:50,
+						editor:{
+							type:'combobox',
+							options:{
+			                    valueField:'id',
+			                    textField:'text',
+			                    editable:false,
+			                    data:[
+			                        {id:'YES', text:'YES' },
+			                        {id:'NO', text:'NO' },
+			                    ]
+							}
+						}" 
+						sortable="true"  width="5%">模糊查询</th>
+					<th data-options="field:'compareQuery',width:50,
+						editor:{
+							type:'combobox',
+							options:{
+			                    valueField:'id',
+			                    textField:'text',
+			                    editable:false,
+			                    data:[
+			                        {id:'YES', text:'YES' },
+			                        {id:'NO', text:'NO' },
+			                    ]
+							}
+						}" 
+						sortable="true" width="5%">比较查询</th>
+					<th data-options="field:'commonts',width:100,editor:'text'" sortable="true" width="40%">commonts</th>
+				</tr>
+			</thead>
+		</table>
+		<div id="condition" class="container_12" style="position:relative;padding:0px;">
+			<div style="height:10px;" >
+			</div>
+			<span>表名:</span>
+			<input id="tableName" class="easyui-textbox" data-options="iconWidth:30,prompt:''" style="width:150px;padding:2px;">
+			<span>URL:</span>
+			<input id="url" class="easyui-textbox" data-options="iconWidth:30,prompt:''" value ="jdbc:mysql://localhost:3306/test" style="width:250px;padding:2px;">
+			<span>帐户名:</span>
+			<input id="user" class="easyui-textbox" style="width:150px;padding:2px;">
+			<span>密码:</span>
+			<input id="password" class="easyui-textbox" style="width:150px;padding:2px;">
+			<div style="height:10px;" >
+			</div>
+			<span>basePackage:</span>
+			<input id="basePackage" class="easyui-textbox" value="tf56" data-options="required:true" style="width:150px;padding:2px;">	
+			<span>daoPackage:</span>
+			<input id="daoPackage" class="easyui-textbox" value='dao' style="width:150px;padding:2px;">	
+			<span>queryPackage:</span>
+			<input id="queryPackage" class="easyui-textbox" value='query' style="width:150px;padding:2px;">
+			<span>entityPackage:</span>
+			<input id="entityPackage" class="easyui-textbox" value='domain' style="width:150px;padding:2px;">
+			<div style="height:10px;" >
+			</div>			
+			<span>Entity后缀:</span>
+			<input id="entitySuffix" class="easyui-textbox" value='DO' style="width:150px;padding:2px;">
+			<span>Query前缀:</span>
+			<input id="queryPrefix" class="easyui-textbox" value='Query' style="width:150px;padding:2px;">			
+			<span>DAO后缀:</span>
+			<input id="daoSuffix" class="easyui-textbox" value='DAO' style="width:150px;padding:2px;">
+			<div style="height:10px;" >
+			</div>
+			<span>创建人:</span>
+			<input id="createUser" class="easyui-textbox" style="width:150px;padding:2px;">	
+			<span>生成路径:</span>
+			<input id="outPut" class="easyui-textbox" value="D:/output" style="width:150px;padding:2px;">
+			<span>方式:</span>	
+			<select id ="way" class="easyui-combobox" name="way" style="width:100px;">
+				<option value="mybatis">mybatis</option>
+				<option value="ibatis">ibatis</option>
+			</select>
+			<span>mark:</span>
+			<input id="mark" class="easyui-textbox" value='' style="width:150px;padding:2px;">
+			<div>
+				<div style="height:10px;" >
+				</div>
+				<div>
+					<a id="search" class="easyui-linkbutton" data-options="iconCls:'icon-search'" style="width:80px;" onclick="searchRecords()">Search</a>
+					<a id="search" class="easyui-linkbutton" data-options="iconCls:'icon-search'" style="width:80px;" onclick="buildCode()">创建</a>
+					<a id="search" class="easyui-linkbutton" data-options="iconCls:'icon-search'" style="width:80px;" onclick="download2()">下载</a>
+				</div>	
+			</div>
+			<div style="height:10px;" >
+			</div>
+		</div>
+	</div>
+	
+</body>
+</html>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.web.autobuild.dao.PageAttributeDAO">
+
+    <resultMap id="PageAttributeDO" type = "org.web.autobuild.domain.PageAttributeDO">
+        <id column="PAGE_ATTRIBUTE_ID" property="pageAttributeId" />
+		<result column="VIEW_MARK"  property="viewMark"  jdbcType="VARCHAR" />
+		<result column="ATTRIBUTE"  property="attribute"  jdbcType="VARCHAR" />
+		<result column="ALIAS"  property="alias"  jdbcType="VARCHAR" />
+		<result column="TYPE"  property="type"  jdbcType="CHAR" />
+		<result column="LENGTH"  property="length"  jdbcType="BIGINT" />
+		<result column="QUERY_TAG"  property="queryTag"  jdbcType="CHAR" />
+		<result column="LIST_TAG"  property="listTag"  jdbcType="CHAR" />
+		<result column="ADD_TAG"  property="addTag"  jdbcType="CHAR" />
+		<result column="DETAIL_TAG"  property="detailTag"  jdbcType="CHAR" />
+		<result column="UPDATE_TAG"  property="updateTag"  jdbcType="CHAR" />
+    </resultMap>
+
+    <sql id="all_columns">
+		 PAGE_ATTRIBUTE_ID ,  VIEW_MARK ,  ATTRIBUTE ,  ALIAS ,  TYPE ,  LENGTH ,  QUERY_TAG ,  LIST_TAG ,  ADD_TAG ,  DETAIL_TAG , UPDATE_TAG
+	</sql>
+
+    <sql id="query_condition">
+		<if test = "pageAttributeId != null " ><![CDATA[ AND PAGE_ATTRIBUTE_ID = #{pageAttributeId}]]></if>		
+		<if test = "viewMark != null " ><![CDATA[ AND VIEW_MARK = #{viewMark}]]></if>		
+    </sql>
+
+    <insert id="insertPageAttribute" parameterType="org.web.autobuild.domain.PageAttributeDO" useGeneratedKeys="true" keyProperty="pageAttributeId">
+		INSERT INTO page_attribute (<include refid="all_columns" />) VALUES
+		(
+		#{pageAttributeId} , #{viewMark} , #{attribute} , #{alias} , #{type} , #{length} , #{queryTag} , #{listTag} , #{addTag} , #{detailTag} , #{updateTag}
+		)
+    </insert>
+
+	
+    <select id="selectPageAttributeList" resultMap="PageAttributeDO" parameterType="org.web.autobuild.query.QueryPageAttribute">
+        SELECT <include refid="all_columns" /> FROM page_attribute
+		<where>
+			  <include refid="query_condition"/>
+		</where>
+		<if test="orderByClause !=null" > ORDER BY ${orderByClause}</if>
+		<!-- add order or query info. -->
+		<![CDATA[
+
+		]]>
+		
+		<if test="startNum != null" > LIMIT #{startNum},#{pageSize}</if>
+    </select>
+
+	
+    <select id="countPageAttributeList" resultType="int" parameterType="org.web.autobuild.query.QueryPageAttribute">
+		SELECT COUNT(1) FROM page_attribute
+		<where>
+			  <include refid="query_condition"/>
+		</where>
+
+		<!-- add order or query info. -->
+		<![CDATA[
+
+		]]>
+    </select>
+
+    <select id="selectPageAttributeByPageAttributeId" resultMap="PageAttributeDO" parameterType="Long">
+        SELECT <include refid="all_columns" /> FROM page_attribute WHERE PAGE_ATTRIBUTE_ID = #{pageAttributeId}
+    </select>
+
+    <update id="updatePageAttributeByPageAttributeId" parameterType="org.web.autobuild.domain.PageAttributeDO">
+        UPDATE page_attribute
+		<set>
+			<if test="viewMark!=null"><![CDATA[VIEW_MARK=#{viewMark},]]></if>
+			<if test="attribute!=null"><![CDATA[ATTRIBUTE=#{attribute},]]></if>
+			<if test="alias!=null"><![CDATA[ALIAS=#{alias},]]></if>
+			<if test="type!=null"><![CDATA[TYPE=#{type},]]></if>
+			<if test="length!=null"><![CDATA[LENGTH=#{length},]]></if>
+			<if test="queryTag!=null"><![CDATA[QUERY_TAG=#{queryTag},]]></if>
+			<if test="listTag!=null"><![CDATA[LIST_TAG=#{listTag},]]></if>
+			<if test="addTag!=null"><![CDATA[ADD_TAG=#{addTag},]]></if>
+			<if test="detailTag!=null"><![CDATA[DETAIL_TAG=#{detailTag},]]></if>
+			<if test="updateTag!=null"><![CDATA[UPDATE_TAG=#{updateTag},]]></if>
+		</set>
+
+        <![CDATA[ WHERE  PAGE_ATTRIBUTE_ID = #{pageAttributeId} ]]>
+
+      </update>
+
+</mapper>
+

@@ -1,0 +1,27 @@
+#set($entityName = $buildCodeRequest.getEntityNameDO().getEntityName())
+#set($upperEntityName = $buildCodeRequest.getEntityNameDO().getUpperEntityName())
+#set($domainEntityName = $buildCodeRequest.getEntityNameDO().getDomainEntityName())
+#set($upperDomainEntityName = $buildCodeRequest.getEntityNameDO().getUpperDomainEntityName())
+#set($queryEntityName = $buildCodeRequest.getEntityNameDO().getQueryEntityName())
+#set($upperQueryEntityName = $buildCodeRequest.getEntityNameDO().getUpperQueryEntityName())
+package $buildCodeRequest.getPackageInfoDO().getDaoPackage();
+
+import java.util.List;
+import $buildCodeRequest.getPackageInfoDO().getQueryPackage()$dot$upperQueryEntityName;
+import $buildCodeRequest.getPackageInfoDO().getDomainPackage()$dot$upperDomainEntityName;
+
+public interface $buildCodeRequest.getEntityNameDO().getUpperDaoEntityName() {
+
+	public $upperDomainEntityName $buildCodeRequest.getEntityNameDO().getQueryByIdMethod()($buildCodeRequest.getPrimaryCodeAttributeDO().getAttributeType() $buildCodeRequest.getPrimaryCodeAttributeDO().getAttributeName());
+
+	public List< $upperDomainEntityName > $buildCodeRequest.getEntityNameDO().getQueryListMethod()($upperQueryEntityName $queryEntityName);
+
+	public Integer $buildCodeRequest.getEntityNameDO().getCountMethod()($upperQueryEntityName $queryEntityName);
+
+	public int $buildCodeRequest.getEntityNameDO().getInsertMethod()($upperDomainEntityName $domainEntityName);
+
+	public int $buildCodeRequest.getEntityNameDO().getUpdateMethod()($upperDomainEntityName $domainEntityName);
+	
+	public List<String> selectDistinctList($upperQueryEntityName $queryEntityName);
+
+}

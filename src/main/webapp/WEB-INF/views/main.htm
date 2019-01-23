@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Basic Layout - jQuery EasyUI Demo</title>
+	<link rel="stylesheet" type="text/css" href="/autobuild/easyui/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="/autobuild/easyui/themes/icon.css">
+	<link rel="stylesheet" type="text/css" href="/autobuild/easyui/demo.css">
+	<script type="text/javascript" src="/autobuild/easyui/jquery.min.js"></script>
+	<script type="text/javascript" src="/autobuild/easyui/jquery.easyui.min.js"></script>
+	<script type="text/javascript">
+		$(function() {
+			$("div[tag]").bind( "click", function() {
+			    var view = $(this).attr("view");
+			    var title = $(this).html();
+				var url = view+".html";
+				var content = '<iframe scrolling="auto" frameborder="0" src="'+url+'" style="width:99%;height:99%;"></iframe>';
+				$('#tabs').tabs('add',{
+				title:title,
+				content:content,
+				closable:true
+				});
+			});
+		})
+
+	</script>
+</head>
+<body class="easyui-layout">
+	<div style="width:15%;height:5%;"></div>
+	
+	<!-- 上部 -->
+	<!-- <div data-options="region:'north',maxHeight:80  ,split:true,border:true" style="height:60px;padding:10px">north region</div></div>-->
+	
+	<!-- 下部 -->
+	<!-- <div data-options="region:'south',split:false,border:true" style="height:50px;padding:10px;">south region</div> -->
+	
+	<div data-options="region:'west',maxWidth:250,minWidth:150,split:true,collapsed:false,title:'West',hideCollapsedContent:false" style="width:200px;padding:0;">
+		<div class="easyui-accordion" data-options="width:250,multiple:true">
+			<div title="About" data-options="iconCls:'icon-ok'" style="overflow:auto;padding:0;">
+				<h3 style="color:#0099FF;">Accordion for jQuery</h3>
+				<p>Accordion is a part of easyui </p>					
+			</div>
+			<div title="TreeMenu" data-options="iconCls:'icon-search',selected:true"  style="padding:0;">
+				<ul class="easyui-tree">
+					<li>
+						<span>功能菜单</span>
+						<ul>
+							<li><div tag="event" view="code/buildCodeView">创建code</div></li>
+							<li><div tag="event" view="page/buildPageView">创建页面代码</div></li>								
+							<li><div tag="event" view="help">HELP</div></li>
+						</ul>
+					</li>
+				</ul>
+			</div>
+			<div title="Help" data-options="iconCls:'icon-help'" style="padding:0;">
+				<p> ask luyl for help.</p>
+			</div>
+		</div>
+	</div>
+	<div data-options="region:'east',split:true,collapsed:true,title:'East',hideCollapsedContent:true" style="width:100px;padding:10px;">east region</div>
+	
+	<div data-options="region:'center',title:'Center'">
+		<div id="tabs" class="easyui-tabs" data-options="fit:true"  style="width:auto;height:auto">
+			<div title="Help" data-options="iconCls:'icon-help',closable:true" style="padding:10px">
+				This is the help content.
+			</div>			
+		</div>
+	</div>
+	
+</body>
+</html>

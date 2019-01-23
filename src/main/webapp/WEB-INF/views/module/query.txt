@@ -1,0 +1,42 @@
+#set($entityName = $buildCodeRequest.getEntityNameDO().getEntityName())
+#set($upperEntityName = $buildCodeRequest.getEntityNameDO().getUpperEntityName())
+#set($domainEntityName = $buildCodeRequest.getEntityNameDO().getDomainEntityName())
+#set($upperDomainEntityName = $buildCodeRequest.getEntityNameDO().getUpperDomainEntityName())
+#set($queryEntityName = $buildCodeRequest.getEntityNameDO().getQueryEntityName())
+#set($upperQueryEntityName = $buildCodeRequest.getEntityNameDO().getUpperQueryEntityName())
+package $buildCodeRequest.getPackageInfoDO().getQueryPackage();
+
+import java.util.Date;
+import java.util.List;
+import java.util.ArrayList;
+import lombok.Getter;
+import lombok.Setter;
+import org.web.domain.QueryBase;
+
+@Setter
+@Getter
+public class $upperQueryEntityName extends QueryBase {
+
+#foreach ($column in $buildCodeRequest.list)
+	#set($codeAttributeDO = $buildCodeRequest.map.get($column))
+	#if($codeAttributeDO.getEqualSupport().equals("YES"))
+
+	private $codeAttributeDO.getAttributeType() $codeAttributeDO.getAttributeName();
+	#end
+	#if($codeAttributeDO.getIndistinctSupport().equals("YES"))
+
+	private $codeAttributeDO.getAttributeType() indistinct$codeAttributeDO.getUpperAttributeName();
+	#end
+	#if($codeAttributeDO.getCompareSupport().equals("YES"))
+
+	private $codeAttributeDO.getAttributeType() moreThan$codeAttributeDO.getUpperAttributeName();
+	private $codeAttributeDO.getAttributeType() lessThan$codeAttributeDO.getUpperAttributeName();
+	private $codeAttributeDO.getAttributeType() equalAndMoreThan$codeAttributeDO.getUpperAttributeName();
+	private $codeAttributeDO.getAttributeType() equalAndLessThan$codeAttributeDO.getUpperAttributeName();
+	#end
+	#if($codeAttributeDO.getInSupport().equals("YES"))
+
+	private List < $codeAttributeDO.getAttributeType() > $codeAttributeDO.getAttributeName()List;
+	#end	
+#end
+}

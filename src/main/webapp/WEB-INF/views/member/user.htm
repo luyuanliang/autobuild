@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Basic SearchBox - jQuery EasyUI Demo</title>
+
+		<link rel="stylesheet" type="text/css" href="/autobuild/easyui/themes/default/easyui.css">
+		<link rel="stylesheet" type="text/css" href="/autobuild/easyui/themes/icon.css">
+		<link rel="stylesheet" type="text/css" href="/autobuild/easyui/demo.css">
+		<script type="text/javascript" src="/autobuild/easyui/jquery.min.js"></script>
+		<script type="text/javascript" src="/autobuild/easyui/jquery.easyui.min.js"></script>
+		<script type="text/javascript" src="/autobuild/easyui/jquery-1.11.3.js"></script>
+		
+		<script>
+
+			$(function() {
+				var $jQuery = jQuery.noConflict();
+				$(".datebox :text").attr("readonly","readonly");
+				$('#addNewDialog').panel('close');
+				$("#updateDialog").panel('close');
+				$("#detailDialog").panel('close');
+				}
+			)
+
+			function searchRecords(){
+				$('#recordGrid').datagrid({
+					loadMsg: '正在加载信息...',
+					type : 'post',
+					queryParams: {
+						name: $('#name').val(),
+						age: $('#age').val(),
+						description: $('#description').val(),
+						status: $('#status').val(),
+						beginTime: $('#beginTime').datetimebox('getValue'),
+						endTime: $('#endTime').datetimebox('getValue'),
+					},
+					url:'/autobuild/member/selectUserList.do',
+				});
+			}
+
+			function deleteRecords() {
+				//var row = $('#recordGrid').datagrid('getSelections');
+				var ids = [];
+				var deleteIds = "";
+				var rows = $('#recordGrid').datagrid('getChecked');
+				for(var i=0; i<rows.length; i++){
+					ids.push(rows[i].userId);
+					if(i==0){
+						deleteIds=rows[i].userId
+					}else {
+						deleteIds=deleteIds+","+rows[i].userId;
+					}
+				}
+				if(ids==""){
+					alert("选一个啊！");
+				} else {
+					var deleteAlert = ids.join('\n');
+					deleteAlert = deleteAlert+"\n准备删除以上记录";
+					//$.messager.alert("操作提示", deleteAlert,"WARNNING");
+					alert(deleteAlert);
+					$.messager.confirm("删除确认","是否批量删除记录", function (r) { 
+						if (r) {
+							var $jQuery =   jQuery.noConflict();
+							jQuery.ajax({
+								type: 'POST',
+								url: "/autobuild/member/deleteUser.do",
+								data:{
+								deletes :deleteIds
+									},
+								success: function (text) {
+									var ajaxResult=eval("("+text+")");
+									if(ajaxResult.result){
+										delRows();
+										} else {
+											displayAjaxResult(ajaxResult);
+										}
+									},
+								error: function () {
+										$.messager.alert("操作提示", "删除失败","ERROR");
+									}
+								});			
+		       			 	}
+					});	
+				}
+			}
+
+
+			function addReordForm(){
+				var checkPass = $('#addNewForm').form('validate');
+				if(!checkPass){
+					return;
+					}
+
+				$.messager.confirm("新增确认","是否新增记录", function (r) {
+				    if (r) {
+						var $jQuery =   jQuery.noConflict();
+						jQuery.ajax({
+							type: 'POST',
+							url: "/autobuild/member/insertUser.do",
+							data:{
+								name: $('#name_addForm').val(),
+								age: $('#age_addForm').val(),
+								description: $('#description_addForm').val(),
+								status: $('#status_addForm').val(),
+								beginTime: $('#beginTime_addForm').datetimebox('getValue'),
+								endTime: $('#endTime_addForm').datetimebox('getValue'),
+								},
+							success: function (text) {
+								var ajaxResult=eval("("+text+")");
+								displayAjaxResult(ajaxResult);
+								$('#addNewDialog').panel('close');
+							},
+							error: function () {
+								$.messager.alert("操作提示", "新增失败","ERROR");
+							}
+						});				
+       			 	}
+			    });
+			}
+
+		    function displayAjaxResult(ajaxResult) {
+				var title = ajaxResult.title;
+				var msg = ajaxResult.msg;
+				var type = ajaxResult.type;
+				if(title==null||title==""){
+					title = "操作提示";
+				}
+				if(type!="error") {
+				} else if (type!="info") {
+				} else {
+					type = "warnning";
+				}
+				$.messager.alert(title , msg , type);
+			}
+
+			function delRows() {
+				var rows = $('#recordGrid').datagrid("getChecked");
+				for(var i =0;i<rows.length;i++) {
+					var index = $('#recordGrid').datagrid('getRowIndex',rows[i]);
+					$('#recordGrid').datagrid('deleteRow',index);
+				}
+				//$('#recordGrid').datagrid('reload');
+			}
+
+			function onLoadSuccess(data){
+				var rows =  $('#recordGrid').datagrid("getRows");
+				for(var i=0; i<rows.length; i++){
+				}
+			}
+
+			function formatOper(val,row,index) {
+				return ' <a class="Delete_Button" href="javascript:deleteOneRecord(\'' + row.userId + '\')"> 删除 </a> '
+					+  ' <a class="Update_Button" href="javascript:selectOneRecordForUpdate(\'' + row.userId + '\')"> 修改 </a> '
+					+  ' <a class="Query_Button" href="javascript:selectOneRecord(\'' + row.userId + '\')"> 查询 </a> ' 
+			}
+
+			function deleteOneRecord(row) {
+				$.messager.confirm("删除确认","是否删除记录", function (r) {  
+				    if (r) {
+						var $jQuery =   jQuery.noConflict();
+						jQuery.ajax({
+							type: 'POST',
+							url: "/autobuild/member/deleteUser.do",
+							data:{
+								deletes :row
+								},  
+							success: function (text) {
+								var ajaxResult=eval("("+text+")");
+								if(ajaxResult.result){
+									$.messager.alert("操作提示", ajaxResult.msg,ajaxResult.type);
+									var rows = $('#recordGrid').datagrid("getRows"); 
+									for(var i =0;i<rows.length;i++) {
+										if(row==rows[i].userId){
+											var index = $('#recordGrid').datagrid('getRowIndex',rows[i]);
+											$('#recordGrid').datagrid('deleteRow',index);
+											break;
+											}
+										} 
+									} else {
+										  $.messager.alert( "操作提示", ajaxResult.msg , ajaxResult.type);    
+									}
+
+							},
+							error: function () {
+								$.messager.alert("操作提示", "删除失败","ERROR");
+							}
+						});					
+       			 	}  
+			    });
+			}
+			
+			function selectOneRecordForUpdate(primaryKey) { 
+				var $jQuery =   jQuery.noConflict();
+				jQuery.ajax({
+					type: 'POST',
+					url: "/autobuild/member/selectUserDetail.do",
+					data:{
+						userId :primaryKey
+						},  
+					success: function (text) {
+							var ajaxResult=eval("("+text+")");
+							if(ajaxResult.result!=null){
+								displayAjaxResult(ajaxResult);
+							} else {
+								var ajaxResult=eval("("+text+")");
+								$('#updateDialog').dialog("open");
+								$('#updateForm').form('load',{
+								name_UpdateForm:ajaxResult.name,
+								description_UpdateForm:ajaxResult.description,
+								status_UpdateForm:ajaxResult.status,
+								beginTime_UpdateForm:ajaxResult.beginTime,
+								endTime_UpdateForm:ajaxResult.endTime,
+							});
+							}				
+						},
+					error: function () {
+						$.messager.alert("操作提示", "查询记录失败","ERROR");
+						}
+					});
+			}  
+			
+			function updateOneRecord(primaryKey) { 
+				var checkPass = $('#updateForm').form('validate');
+				if(!checkPass){
+					return;
+					}
+				
+				$.messager.confirm("修改确认","是否修改记录", function (r) {  
+				    if (r) {
+						var $jQuery =   jQuery.noConflict();
+						jQuery.ajax({
+							type: 'POST',
+							url: "/autobuild/member/updateUser.do",
+							data:{
+							description: $('#description_UpdateForm').val(),
+							status: $('#status_UpdateForm').val(),
+							beginTime: $('#beginTime_UpdateForm').datetimebox('getValue'),
+							endTime: $('#endTime_UpdateForm').datetimebox('getValue'),
+							userId:$('#userId_UpdateForm').val()				
+								},  
+							success: function (text) {
+								var ajaxResult=eval("("+text+")");
+								displayAjaxResult(ajaxResult);
+								$('#updateDialog').panel('close');
+							},
+							error: function () {
+								$.messager.alert("操作提示", "修改失败","ERROR");
+							}
+						});						
+       			 	}  
+			    });								
+			
+			}
+			
+			
+			function selectOneRecord(primaryKey) { 
+				var $jQuery =   jQuery.noConflict();
+				jQuery.ajax({
+					type: 'POST',
+					url: "/autobuild/member/selectUserDetail.do",
+					data:{
+						userId :primaryKey
+						},  
+					success: function (text) {
+						var ajaxResult=eval("("+text+")");
+						if(ajaxResult.result!=null){
+							displayAjaxResult(ajaxResult);
+						} else {
+							$('#detailDialog').dialog("open");
+							$('#detailForm').form('load',{
+								name:ajaxResult.name,
+								age:ajaxResult.age,
+								description:ajaxResult.description,
+								status:ajaxResult.status,
+								beginTime:ajaxResult.beginTime,
+								endTime:ajaxResult.endTime,
+								});		
+							}
+						},
+					error: function () {
+						$.messager.alert("操作提示", "查询记录失败","ERROR");
+						}
+					});
+			}
+			
+			$(function () {
+				$(".panel-noscroll")
+					.css({
+						top: 0,
+						right: 0,
+						bottom: 0,
+						left: 0
+					});
+					
+				$(".panel.datagrid.easyui-fluid").css('width', '100%') 
+					.find('.panel-header').css('width', '100%').end()
+					.find('.datagrid-wrap.panel-body').css('width', '100%')
+					.find('.datagrid-view').css('width', '100%');
+			});
+			
+		</script>
+	</head>
+	<body>
+
+	<div style="margin: 0px 0 0px 0; margin: 0px; position: absolute; top:0; right:0;bottom: 0; left: 0;">
+		<table id="recordGrid" class="easyui-datagrid" title="DataGrid Complex Toolbar" style="width:100%;height:101%;padding:0px;margin:0 0 0 0;"
+				data-options="rownumbers:true,onLoadSuccess: onLoadSuccess,remoteSort:false,checkOnSelect:false,pagination:true,singleSelect:false,url:'',method:'post',toolbar:'#condition'">				
+				<thead>
+					<tr>
+						<th data-options="field:'ck',checkbox:true"></th>
+						<th data-options="field:'name',width:50" sortable="false" width="10%">名字</th>
+						<th data-options="field:'age',width:50" sortable="false" width="10%">年龄</th>
+						<th data-options="field:'description',width:50" sortable="false" width="10%">描述</th>
+						<th data-options="field:'status',width:50" sortable="false" width="10%">状态</th>
+						<th data-options="field:'beginTime',width:50" sortable="false" width="10%">开始时间</th>
+						<th data-options="field:'endTime',width:50" sortable="false" width="10%">结束时间</th>
+						<th data-options="field:'userId',width:50,hidden:true" sortable="true" width="10%">PramaryKey</th>
+						<th	data-options="field:'operate',width:50,align:'center',formatter:formatOper"	sortable="false" width="10%">操作</th>
+					</tr>
+				</thead>
+		</table>
+
+		<div id="condition" class="container_12" style="position: relative; padding: 0px;">
+			<div style="height: 10px;">
+			</div>
+			<span>名字:</span>
+			<input id="name" class="easyui-textbox" data-options="iconWidth:30,prompt:''" style="width: 150px; padding: 2px;">
+			<span>年龄:</span>
+			<input id="age" class="easyui-textbox" data-options="iconWidth:30,prompt:''" style="width: 150px; padding: 2px;">
+			<span>描述:</span>
+			<input id="description" class="easyui-textbox" data-options="iconWidth:30,prompt:''" style="width: 150px; padding: 2px;">
+			<span>状态:</span>
+			<select id="status" class="textbox combo" style="width: 150px; padding: 2px;">
+				<option value="00000"></option>
+				<option value="11111">aaa</option>
+				<option value="22222">bbb</option>
+				<option value="33333">ccc</option>
+			</select>
+			<span>开始时间:</span>
+			<input id="beginTime" class="easyui-datebox" style="width: 150px; padding: 2px;">
+			<span>结束时间:</span>
+			<input id="endTime" class="easyui-datetimebox" style="width: 150px; padding: 2px;">
+				<div>
+					<div style="height: 10px;">
+					</div>
+					<div>
+						<a id="search" class="easyui-linkbutton" data-options="iconCls:'icon-search'" style="width: 80px;" onclick="searchRecords()">Search</a>
+						<a id="cut" class="easyui-linkbutton" data-options="iconCls:'icon-cut'" style="width: 80px;" onclick="deleteRecords()">delete</a>
+						<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add'" onclick="$('#addNewDialog').dialog('open')" style="width: 85px;">新增记录</a>
+                        <span>选择模式: </span>
+						<select class="textbox combo" onchange="$('#recordGrid').datagrid({singleSelect:(this.value==0)})">
+							<option value="1">多行</option>
+							<option value="0">单行</option>
+						</select>				
+					</div>
+				</div>
+				<div style="height: 10px;">
+				</div>
+			</div>
+		</div>
+
+		<div id="addNewDialog" class="easyui-dialog" title="ADD NEW RECORD" data-options="iconCls:'icon-save',buttons:'#addDialogToolbar',modal:false" style="width: 500px; height: 600px; padding: 10px">
+			<div style="padding: 10px 60px 20px 60px">
+				<center>
+				<form id="addNewForm" method="post">
+					<table>
+						<tr>
+							<td>名字:</td>
+							<td>
+								<input id="name_addForm" class="easyui-textbox" data-options="iconWidth:30,prompt:''" style="width: 200px; padding: 2px;">
+							</td>
+						</tr>	
+						<tr>
+							<td>年龄:</td>
+							<td>
+								<input id="age_addForm" class="easyui-textbox" data-options="iconWidth:30,prompt:''" style="width: 200px; padding: 2px;">
+							</td>
+						</tr>	
+						<tr>
+							<td>描述:</td>
+							<td><input id="description_addForm" class="easyui-textbox" data-options="multiline:true" style="width: 200px; height:60px"></input></td>
+						</tr>			
+						<tr>
+							<td>状态:</td>
+							<td>
+								<select id="status_addForm" class="textbox combo" style="width: 200px; padding: 2px;">
+									<option value="00000"></option>
+									<option value="11111">aaa</option>
+									<option value="22222">bbb</option>
+									<option value="33333">ccc</option>
+								</select>
+							</td>
+						</tr>	
+						<tr>
+							<td>开始时间:</td>
+							<td>
+								<input id="beginTime_addForm" class="easyui-datebox" data-options="required:true" style="width: 200px; padding: 2px;">
+							</td>
+						</tr>
+						<tr>
+							<td>结束时间:</td>
+							<td>
+								<input id="endTime_addForm" class="easyui-datetimebox" data-options="required:true" style="width: 200px; padding: 2px;">
+							</td>
+						</tr>									
+
+					</table>
+				</form>
+				</center>
+			</div>
+		</div>
+
+		<div id="addDialogToolbar" style="text-align: center; padding: 5px">
+			<a href="javascript:void(0)" class="easyui-linkbutton" onclick="addReordForm()">新增</a>
+			<a href="javascript:void(0)" class="easyui-linkbutton" onclick="$('#addNewForm').form('clear')">Clear</a>
+		</div>
+
+
+		<div id="updateDialog" class="easyui-dialog" title="Update Record" style="width:500px;height:400px;text-align:center" data-options="iconCls:'icon-save',resizable:true,buttons:'#udpateDialogToolbar',modal:true" >
+		    <center>
+			<form id="updateForm" method="post">
+				<table>
+
+					<tr>
+						<td>名字:</td>
+						<td><input name="name_UpdateForm" id="name_UpdateForm"  class="easyui-textbox" data-options="disabled:true" type="text"  style="width: 200px; padding: 2px;"></input></td>
+					</tr>
+					
+					<tr>
+						<td>描述:</td>
+						<td><input name="description_UpdateForm" id="description_UpdateForm" class="easyui-textbox" data-options="multiline:true" style="width:200px;height:60px"></input></td>
+					</tr>							
+					<tr>
+						<td>状态:</td>
+						<td>
+							<select name="status_UpdateForm" id="status_UpdateForm" class="textbox combo" style="width: 200px; padding: 2px;">
+								<option value="00000"></option>
+								<option value="11111">aaa</option>
+								<option value="22222">bbb</option>
+								<option value="33333">ccc</option>
+							</select>
+						</td>
+					</tr>								
+					<tr>
+						<td>开始时间:</td>
+						<td>
+							<input name="beginTime_UpdateForm" id="beginTime_UpdateForm" class="easyui-datebox" data-options="required:true" style="width: 200px; padding: 2px;">
+						</td>
+					</tr>
+					<tr>
+						<td>结束时间:</td>
+						<td>
+							<input name="endTime_UpdateForm" id="endTime_UpdateForm" class="easyui-datetimebox" data-options="required:true" style="width: 200px; padding: 2px;">
+						</td>
+					</tr>									
+					<tr hidden=true>
+						<td>userId:</td>
+						<td><input name="userId_UpdateForm" id="userId_UpdateForm" class="easyui-textbox" data-options="disabled:true" type="text"></input></td>
+					</tr>
+				</table>
+			</form>
+			</center>
+		</div>
+ 
+		<div id="udpateDialogToolbar">
+			<center>
+				<a href="#" class="easyui-linkbutton" onclick="updateOneRecord()">保存</a>
+				<a href="#" class="easyui-linkbutton" onclick="$('#updateDialog').dialog('close')">关闭</a>
+			</center>
+		</div>
+
+		<div id="detailDialog" class="easyui-dialog" title="Query Detail Record" style="width:500px;height:400px;text-align:center" data-options="iconCls:'icon-save',resizable:true,buttons:'#detailDialogToolbar',modal:true"  >
+		    <center>
+				<form id="detailForm" method="post">
+					<table>
+						<tr>
+							<td>名字:</td>
+							<td><input class="easyui-textbox" data-options="disabled:true" type="text" name="name" style="width:200px;"></input></td>
+						</tr>
+						<tr>
+							<td>年龄:</td>
+							<td><input class="easyui-textbox" data-options="disabled:true" type="text" name="age" style="width:200px;"></input></td>
+						</tr>
+						<tr>
+							<td>描述:</td>
+							<td><input class="easyui-textbox" data-options="disabled:true,multiline:true" type="text" name="description" style="width:200px;height:60px"></input></td>
+						</tr>								
+						<tr>
+							<td>状态:</td>
+							<td><input class="easyui-textbox" data-options="disabled:true" type="text" name="status" style="width:200px;"></input></td>
+						</tr>
+						<tr>
+							<td>开始时间:</td>
+							<td><input class="easyui-textbox" data-options="disabled:true" type="text" name="beginTime" style="width:200px;"></input></td>
+						</tr>
+						<tr>
+							<td>结束时间:</td>
+							<td><input class="easyui-textbox" data-options="disabled:true" type="text" name="endTime" style="width:200px;"></input></td>
+						</tr>
+					</table>
+				</form>
+			</center>
+		</div>
+
+		<div id="detailDialogToolbar">
+			<center>
+				<a href="#" class="easyui-linkbutton" onclick="$('#detailDialog').dialog('close')">关闭</a>
+			</center>
+		</div>		
+		
+	</body>
+</html>
+

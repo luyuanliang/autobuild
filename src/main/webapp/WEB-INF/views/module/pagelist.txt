@@ -1,0 +1,13 @@
+#set($list=$buildPageRequest.getList())
+#set($map=$buildPageRequest.getMap())
+#set($primaryKey=$buildPageRequest.getPrimaryKey())
+{"total":25,"rows":
+	[
+#foreach($foo in [0..25])
+  		{"$primaryKey":"$primaryKey$foo",#set($count=1)#foreach($attributeKey in $!list)#set($pageAttributeDO=$map.get($attributeKey))#if($pageAttributeDO.getType().equals("date")||$pageAttributeDO.getType().equals("time"))"$pageAttributeDO.getAttribute()": "12/03/2016 12:06:88" #if($count!=$list.size()),#end#else"$pageAttributeDO.getAttribute()": "$pageAttributeDO.getAttribute()$foo" #if($count!=$list.size()),#end#end#set($count=$count+1)#end
+}#if($foo!=25),#end
+
+#end
+	]
+}
+

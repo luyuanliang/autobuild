@@ -1,0 +1,75 @@
+#set($webName=$buildPageRequest.getWebName())
+#set($moduleName=$buildPageRequest.getModuleName())
+#set($actionName=$buildPageRequest.getActionName())
+package com.web.shop.view.demo;
+
+import java.io.IOException;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.google.gson.Gson;
+
+@Scope("prototype")
+@Controller
+@RequestMapping("/$moduleName")
+public class ${actionName}View {
+	
+	// private static final Logger logger = LoggerFactory.getLogger(UserView2.class);
+
+	@RequestMapping(value = "insert${actionName}", method = { RequestMethod.GET, RequestMethod.POST })
+	@ResponseBody
+	public String insert${actionName}(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		Gson gson = new Gson();
+		ViewResult result = new ViewResult();
+		result.setMsg("添加成功");
+		result.setResult(true);
+		result.setType("warning");
+	    return gson.toJson(result);
+	}
+
+	@RequestMapping(value = "delete${actionName}", method = { RequestMethod.GET, RequestMethod.POST })
+	@ResponseBody
+	public String delete${actionName}(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		Gson gson = new Gson();
+		ViewResult result = new ViewResult();
+		result.setMsg("删除成功");
+		result.setResult(true);
+		result.setType("error");
+		return gson.toJson(result);
+	}
+
+	@RequestMapping(value = "update${actionName}", method = { RequestMethod.GET, RequestMethod.POST })
+	@ResponseBody
+	public String update${actionName}(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		Gson gson = new Gson();
+		ViewResult result = new ViewResult();
+		result.setMsg("修改成功");
+		result.setResult(true);
+		result.setType("warning");
+	    return gson.toJson(result);
+	}
+
+	@RequestMapping(value = "select${actionName}Detail", method = { RequestMethod.GET, RequestMethod.POST })
+	public String select${actionName}Detail(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		return "$moduleName/select${actionName}Detail";
+	}
+	
+	@RequestMapping(value = "select${actionName}List", method = { RequestMethod.GET, RequestMethod.POST })
+	public String select${actionName}List(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		return "$moduleName/select${actionName}List";
+	}
+	
+	@RequestMapping(value = "$lowerActionName", method = { RequestMethod.GET, RequestMethod.POST })
+	public String $lowerActionName(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		return "$moduleName/$lowerActionName";
+	}
+}

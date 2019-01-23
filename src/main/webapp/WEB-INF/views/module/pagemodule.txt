@@ -1,0 +1,380 @@
+#set($webName=$buildPageRequest.getWebName())
+#set($moduleName=$buildPageRequest.getModuleName())
+#set($actionName=$buildPageRequest.getActionName())
+#set($attributeList=$buildPageRequest.getList())
+#set($primaryKey=$buildPageRequest.getPrimaryKey())
+#set($upperPrimaryKey=$buildPageRequest.getUpperPrimaryKey())
+#set($list=$buildPageRequest.getList())
+#set($map=$buildPageRequest.getMap())
+#set($doSuffix=".do")
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Basic SearchBox - jQuery EasyUI Demo</title>
+
+		<link id="css" rel="stylesheet" type="text/css" href="/$webName/easyui/themes/default/easyui.css">
+		<link rel="stylesheet" type="text/css" href="/$webName/easyui/themes/icon.css">
+		<link rel="stylesheet" type="text/css" href="/$webName/easyui/demo.css">
+		<script type="text/javascript" src="/$webName/easyui/jquery.min.js"></script>
+		<script type="text/javascript" src="/$webName/easyui/jquery.easyui.min.js"></script>
+		<script type="text/javascript" src="/$webName/easyui/jquery-1.11.3.js"></script>
+		<script type="text/javascript" src="/$webName/easyui/common.js"></script>
+		
+		<script>
+
+			$(function() 
+				{
+					init();
+				}
+			);
+
+	        function searchRecords(searchForm , url , recordGrid){
+	        	var $jQuery = jQuery.noConflict();
+	        	var params = getParams(searchForm);
+	        	// 添加附加参数
+	        	params['param8s']='aaaa';
+	        	
+	            $(recordGrid).datagrid({
+	                onBeforeLoad:function(p){
+	                	return executeDefaultParam(p);
+	                },
+	                loadMsg: '正在加载信息...',
+	                queryParams: params,
+	                type : 'post',
+	                url:url,
+	                loadFilter: function(ajaxResult){
+	            		if (ajaxResult.result){
+	            			return ajaxResult;
+	            		} else {
+	            			return ajaxResult;
+	            		}
+	            	}	                
+	            });	
+	        }
+			
+			// 为新增记录FORM表单，追加额外的参数
+	        function paramAddForm(param){
+	        	console.log('param' , param);
+				//teacherName: $('#teacherName_UpdateForm').val(),
+				//age: $('#age_UpdateForm').val(),
+				//birthday: $('#birthday_UpdateForm').datetimebox('getValue'),
+	        	param.p1 = 'value1';
+    			param.p2 = 'value2';
+	        }
+	        
+	       	// 为修改记录FORM表单，追加额外的参数
+	        function paramUpdateForm(param){
+	        	console.log('param' , param);
+				//teacherName: $('#teacherName_UpdateForm').val(),
+				//age: $('#age_UpdateForm').val(),
+				//birthday: $('#birthday_UpdateForm').datetimebox('getValue'),
+	        	param.$primaryKey = $('#$primaryKey_UpdateForm').val();
+	        }
+	        
+
+			function formatOper(val,row,index) {
+				return ' <a class="Delete_Button" href="javascript:deleteOneRecord(\'' + row.$primaryKey + '\' , \'/$webName/$moduleName/delete${actionName}$doSuffix\')"> 删除 </a> '
+					+  ' <a class="Update_Button" href="javascript:selectOneRecordForUpdate(\'' + row.$primaryKey + '\')"> 修改 </a> '
+					+  ' <a class="Query_Button" href="javascript:selectOneRecord(\'' + row.$primaryKey + '\')"> 查询 </a> ' 
+			}
+
+			
+			function selectOneRecordForUpdate(primaryKey) { 
+				var $jQuery =   jQuery.noConflict();
+				jQuery.ajax({
+					type: 'POST',
+					url: "/$webName/$moduleName/select${actionName}Detail$doSuffix",
+					data:{
+						$primaryKey :primaryKey
+						},  
+					success: function (text) {
+							var ajaxResult=eval("("+text+")");
+							if(!ajaxResult.result){
+								displayAjaxResult(ajaxResult);
+							} else {
+								$('#updateDialog').dialog("open");
+								$('#updateForm').form('load',{
+#foreach($attributeKey in $!list)
+#set($pageAttributeDO=$map.get($attributeKey))
+#if(!$pageAttributeDO.getUpdateTag().equals("NO"))
+								$pageAttributeDO.getAttribute():ajaxResult.data.$pageAttributeDO.getAttribute(),
+#end
+#end
+								${primaryKey}:ajaxResult.data.${primaryKey}
+							});
+							}				
+						},
+					error: function () {
+						$.messager.alert("操作提示", "查询记录失败","ERROR");
+						}
+					});
+			}  
+			
+
+
+			function selectOneRecord(primaryKey) { 
+				var $jQuery =   jQuery.noConflict();
+				jQuery.ajax({
+					type: 'POST',
+					url: "/$webName/$moduleName/select${actionName}Detail$doSuffix",
+					data:{
+						$primaryKey :primaryKey
+						},  
+					success: function (text) {
+						var ajaxResult=eval("("+text+")");
+						if(!ajaxResult.result){
+							displayAjaxResult(ajaxResult);
+						} else {
+							$('#detailDialog').dialog("open");
+							$('#detailForm').form('load',{
+#foreach($attributeKey in $!list)
+#set($pageAttributeDO=$map.get($attributeKey))
+#if($pageAttributeDO.getDetailTag().equals("YES"))
+								$pageAttributeDO.getAttribute():ajaxResult.data.$pageAttributeDO.getAttribute(),
+#end
+#end
+								});		
+							}
+						},
+					error: function () {
+						$.messager.alert("操作提示", "查询记录失败","ERROR");
+						}
+					});
+			}
+			
+		</script>
+	</head>
+	<body>
+
+	<div style="margin: 0; position: absolute; top:0; right:0;bottom: 0; left: 0">
+		<table id="recordGrid" class="easyui-datagrid" title="DataGrid Complex Toolbar" style="width:100%;height:100%;margin:0 0 0 0"
+				data-options="rownumbers:true,onLoadSuccess: onLoadSuccess,remoteSort:false,checkOnSelect:false,pagination:true,singleSelect:false,url:'',method:'post',toolbar:'#condition'">				
+				<thead>
+					<tr>
+						<th data-options="field:'ck',checkbox:true"></th>
+#set($flag="NO_SHOW")
+#foreach($attributeKey in $!list)
+#set($pageAttributeDO=$map.get($attributeKey))
+#if($pageAttributeDO.getListTag().equals("YES"))
+#if($pageAttributeDO.getAttribut().equals($attributeKey))
+	#set($flag="SHOW")
+#end
+						<th data-options="field:'$pageAttributeDO.getAttribute()',width:50,sortable:'true'" width="10%">$pageAttributeDO.getAlias()</th>
+#end
+#end
+#if(!$flag.equals("SHOW"))
+						<th data-options="field:'$primaryKey',width:50,hidden:true" width="10%">PramaryKey</th>
+#end
+						<th	data-options="field:'operate',width:50,align:'center',formatter:formatOper"	width="10%">操作</th>
+					</tr>
+				</thead>
+		</table>
+
+		<div id="condition" class="container_12" style="position: relative; padding: 0">
+			<div style="height: 10px"></div>
+			<form id="searchForm" method="post">
+#foreach($attributeKey in $!list)
+#set($pageAttributeDO=$map.get($attributeKey))
+#if($pageAttributeDO.getQueryTag().equals("YES"))
+			<span>$pageAttributeDO.getAlias():</span>
+#if($pageAttributeDO.getType().equals("date"))
+			<label><span><input name="$pageAttributeDO.getAttribute()" class="easyui-datebox" style="width: 150px; padding: 2px"/></span></label>
+#elseif($pageAttributeDO.getType().equals("time"))
+			<label><span><input name="$pageAttributeDO.getAttribute()" class="easyui-datetimebox" style="width: 150px; padding: 2px"/></span></label>
+#elseif($pageAttributeDO.getType().equals("select"))
+			<label><select name="$pageAttributeDO.getAttribute()" class="textbox combo" style="width: 150px; padding: 2px">
+				<option value="00000"></option>
+				<option value="11111">aaa</option>
+				<option value="22222">bbb</option>
+				<option value="33333">ccc</option>
+			</select></label>
+#else	
+			<label><input name="$pageAttributeDO.getAttribute()" class="easyui-textbox" data-options="iconWidth:30,prompt:''" style="width: 150px; padding: 2px"/></label>
+#end
+#end
+#end
+				<div>
+					<div style="height: 10px">
+					</div>
+					<div>
+						<a id="search" class="easyui-linkbutton" data-options="iconCls:'icon-search'" style="width: 80px" onclick="searchRecords2('#searchForm','/$webName/$moduleName/select${actionName}List$doSuffix')">Search</a>
+						<a id="cut" class="easyui-linkbutton" data-options="iconCls:'icon-cut'" style="width: 80px" onclick="deleteRecords('/$webName/$moduleName/delete${actionName}$doSuffix')">delete</a>
+						<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add'" onclick="$('#addNewDialog').dialog('open')" style="width: 85px">新增记录</a>
+                        <span>选择模式: </span>
+						<label><select  style="width:120px;height:25px" onchange="$('#recordGrid').datagrid({singleSelect:(this.value==0)})">
+							<option value="1">多行</option>
+							<option value="0">单行</option>
+						</select></label>
+						<span style="color:#999">Themes:</span>
+						<span>
+							<select id="cb-theme" style="width:120px;height:25px"></select>
+						</span>
+					</div>
+				</div>
+				<div style="height: 10px"></div>
+				</form>
+			</div>
+		</div>
+
+		<div id="addNewDialog" class="easyui-dialog" title="ADD NEW RECORD" data-options="iconCls:'icon-save',buttons:'#addDialogToolbar',modal:false" style="width: 500px; height: 600px; padding: 10px">
+			<div style="padding: 10px 10px 10px 80px;text-align:center">
+				<form id="addNewForm" method="post">
+					<table>
+#foreach($attributeKey in $!list)
+#set($pageAttributeDO=$map.get($attributeKey))
+#if($pageAttributeDO.getAddTag().equals("YES"))
+#if($pageAttributeDO.getType().equals("date"))
+						<tr>
+							<td>$pageAttributeDO.getAlias():</td>
+							<td><label><input id="$pageAttributeDO.getAttribute()_addForm" name="$pageAttributeDO.getAttribute()" class="easyui-datebox" data-options="required:true" style="width: 200px; padding: 2px"/></label></td>
+						</tr>
+#elseif($pageAttributeDO.getType().equals("time"))
+						<tr>
+							<td>$pageAttributeDO.getAlias():</td>
+							<td><label><input id="$pageAttributeDO.getAttribute()_addForm" name="$pageAttributeDO.getAttribute()" class="easyui-datetimebox" data-options="required:true" style="width: 200px; padding: 2px"/></label></td>
+						</tr>									
+#elseif($pageAttributeDO.getType().equals("select"))
+						<tr>
+							<td>$pageAttributeDO.getAlias():</td>
+							<td>
+								<label>
+									<select id="$pageAttributeDO.getAttribute()_addForm" name="$pageAttributeDO.getAttribute()" class="textbox combo" style="width: 200px; padding: 2px">
+										<option value="00000"></option>
+										<option value="11111">aaa</option>
+										<option value="22222">bbb</option>
+										<option value="33333">ccc</option>
+									</select>
+								</label>
+							</td>
+						</tr>
+#elseif($pageAttributeDO.getType().equals("textbox"))
+						<tr>
+							<td>$pageAttributeDO.getAlias():</td>
+							<td><input id="$pageAttributeDO.getAttribute()_addForm" name="$pageAttributeDO.getAttribute()" class="easyui-textbox" data-options="multiline:true" style="width: 200px; height:60px"/></td>
+						</tr>			
+#else			
+						<tr>
+							<td>$pageAttributeDO.getAlias():</td>
+							<td><label><input id="$pageAttributeDO.getAttribute()_addForm" name="$pageAttributeDO.getAttribute()" class="easyui-textbox" data-options="iconWidth:30,prompt:''" style="width: 200px; padding: 2px"/></label></td>
+						</tr>	
+#end
+#end
+#end						
+
+					</table>
+				</form>
+			</div>
+		</div>
+
+		<div id="addDialogToolbar" style="text-align: center; padding: 5px">
+			<a href="javascript:void(0)" class="easyui-linkbutton" onclick="addReordForm('/$webName/$moduleName/insert${actionName}$doSuffix')">新增</a>
+			<a href="javascript:void(0)" class="easyui-linkbutton" onclick="$('#addNewForm').form('clear')">Clear</a>
+		</div>
+
+
+		<div id="updateDialog" class="easyui-dialog" title="Update Record" style="width:500px;height:400px;text-align:center" data-options="iconCls:'icon-save',resizable:true,buttons:'#udpateDialogToolbar',modal:true" >
+		    <div style="padding: 10px 10px 10px 80px;text-align:center">
+			<form id="updateForm" method="post">
+				<table>
+
+#foreach($attributeKey in $!list)
+#set($pageAttributeDO=$map.get($attributeKey))
+#set($entity=$map.get($attributeKey))
+#if($pageAttributeDO.getUpdateTag().equals("VIEW"))
+					<tr>
+						<td>$pageAttributeDO.getAlias():</td>
+						<td><label><input name="$pageAttributeDO.getAttribute()" class="easyui-textbox" data-options="disabled:true" type="text"  style="width: 200px; padding: 2px"/></label></td>
+					</tr>
+
+#end
+#end
+					
+#foreach($attributeKey in $!list)
+#set($pageAttributeDO=$map.get($attributeKey))
+#if($pageAttributeDO.getUpdateTag().equals("UPDATE"))
+#if($pageAttributeDO.getType().equals("date"))
+					<tr>
+						<td>$pageAttributeDO.getAlias():</td>
+						<td>
+							<label><input name="$pageAttributeDO.getAttribute()" class="easyui-datebox" data-options="required:true" style="width: 200px; padding: 2px"/></label>
+						</td>
+					</tr>
+#elseif($pageAttributeDO.getType().equals("time"))
+					<tr>
+						<td>$pageAttributeDO.getAlias():</td>
+						<td>
+							<label><input name="$pageAttributeDO.getAttribute()" class="easyui-datetimebox" data-options="required:true" style="width: 200px; padding: 2px"/></label>
+						</td>
+					</tr>									
+#elseif($pageAttributeDO.getType().equals("select"))
+					<tr>
+						<td>$pageAttributeDO.getAlias():</td>
+						<td>
+							<label><select name="${pageAttributeDO.getAttribute()}" class="textbox combo" style="width: 200px; padding: 2px">
+								<option value="00000"></option>
+								<option value="11111">aaa</option>
+								<option value="22222">bbb</option>
+								<option value="33333">ccc</option>
+							</select></label>
+						</td>
+					</tr>								
+#elseif($pageAttributeDO.getType().equals("textbox"))
+					<tr>
+						<td>$pageAttributeDO.getAlias():</td>
+						<td><label><input name="$pageAttributeDO.getAttribute()" class="easyui-textbox" data-options="multiline:true" style="width:200px;height:60px"/></label></td>
+					</tr>							
+#else								
+					<tr>
+						<td>$pageAttributeDO.getAlias():</td>
+						<td>
+							<label><input name="$pageAttributeDO.getAttribute()" class="easyui-textbox" data-options="iconWidth:30,prompt:''" style="width:200px;padding: 2px"/></label>
+						</td>
+					</tr>
+#end
+#end
+#end					
+					<tr hidden="true">
+						<td>userId:</td>
+						<td><label><input id="${primaryKey}_UpdateForm"  name="${primaryKey}" class="easyui-textbox" data-options="disabled:true" type="text"/></label></td>
+					</tr>
+				</table>
+			</form>
+			</div>
+		</div>
+ 
+		<div id="udpateDialogToolbar" style="text-align:center">
+			<a href="#" class="easyui-linkbutton" onclick="updateOneRecord('/$webName/$moduleName/update${actionName}$doSuffix')">保存</a>
+			<a href="#" class="easyui-linkbutton" onclick="$('#updateDialog').dialog('close')">关闭</a>
+		</div>
+
+		<div id="detailDialog" class="easyui-dialog" title="Query Detail Record" style="padding:10px 10px 10px 100px;width:500px;height:400px;text-align:center" data-options="iconCls:'icon-save',resizable:true,buttons:'#detailDialogToolbar',modal:true"  >
+				<form id="detailForm" method="post">
+					<table>
+#foreach($attributeKey in $!list)
+#set($pageAttributeDO=$map.get($attributeKey))
+#set($entity=$map.get($attributeKey))
+#if($pageAttributeDO.getDetailTag().equals("YES"))
+#if($pageAttributeDO.getType().equals("textbox"))
+						<tr>
+							<td>$pageAttributeDO.getAlias():</td>
+							<td><label><input class="easyui-textbox" data-options="disabled:true,multiline:true" type="text" name="$pageAttributeDO.getAttribute()" style="width:200px;height:60px"/></label></td>
+						</tr>								
+#else	
+						<tr>
+							<td>$pageAttributeDO.getAlias():</td>
+							<td><label><input class="easyui-textbox" data-options="disabled:true" type="text" name="$pageAttributeDO.getAttribute()" style="width:200px"/></label></td>
+						</tr>
+#end
+#end
+#end
+					</table>
+				</form>
+		</div>
+
+		<div id="detailDialogToolbar" style="text-align:center">
+				<a href="#" class="easyui-linkbutton" onclick="$('#detailDialog').dialog('close')">关闭</a>
+		</div>	
+		
+	</body>
+</html>

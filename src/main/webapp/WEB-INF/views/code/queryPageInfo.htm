@@ -1,0 +1,12 @@
+{"total":$list.size(),"rows":[
+	#foreach($attribute in $!list)
+	
+		#set($element=$map.get($attribute))
+		
+		#if($velocityCount==$list.size())
+			{"attribute":"$attribute","alias":"$element.getAlias()","length":"$element.getLength()","attributeName":"$element.getAttribute()","attributeType":"$element.getType()","supportDetail":"$element.getDetailTag()","supportUpdate":"$element.getUpdateTag()","supportList":"$element.getListTag()","supportQuery":"$element.getQueryTag()","supportAdd":"$element.getAddTag()","type":"$element.getType()"}
+		#else
+			{"attribute":"$attribute","alias":"$element.getAlias()","length":"$element.getLength()","attributeName":"$element.getAttribute()","attributeType":"$element.getType()","supportDetail":"$element.getDetailTag()","supportUpdate":"$element.getUpdateTag()","supportList":"$element.getListTag()","supportQuery":"$element.getQueryTag()","supportAdd":"$element.getAddTag()","type":"$element.getType()"},
+		#end
+	#end		
+]}

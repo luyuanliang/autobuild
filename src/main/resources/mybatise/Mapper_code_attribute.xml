@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.web.autobuild.dao.CodeAttributeDAO">
+    
+	<resultMap id="CodeAttributeDO" type="org.web.autobuild.domain.code.CodeAttributeDO">
+        <id column="CODE_ATTRIBUTE_ID" property="codeAttributeId"/>
+        <result column="MARK" property="mark"/>
+        <result column="COLUMN_NAME" property="columnName"/>
+        <result column="ATTRIBUTE_NAME" property="attributeName"/>
+        <result column="DESCRIPTION" property="description"/>
+        <result column="EQUAL_SUPPORT" property="equalSupport"/>
+        <result column="IN_SUPPORT" property="inSupport"/>
+        <result column="COMPARE_SUPPORT" property="compareSupport"/>
+        <result column="INDISTINCT_SUPPORT" property="indistinctSupport"/>
+        <result column="IS_PRIMARY" property="isPrimary"/>
+        <result column="SORT_ORDER" property="sortOrder"/>
+        <result column="INPUT_TIME" property="inputTime"/>
+    </resultMap>
+
+    <sql id="all_columns">
+		CODE_ATTRIBUTE_ID,MARK,COLUMN_NAME,ATTRIBUTE_NAME,DESCRIPTION,EQUAL_SUPPORT,IN_SUPPORT,COMPARE_SUPPORT,INDISTINCT_SUPPORT,IS_PRIMARY,SORT_ORDER,INPUT_TIME    
+	</sql>
+
+    <sql id="query_condition">
+        <if test="codeAttributeId != null "><![CDATA[ AND CODE_ATTRIBUTE_ID = #{codeAttributeId}]]></if>
+        <if test="mark != null "><![CDATA[ AND MARK = #{mark}]]></if>
+        <if test="columnName != null "><![CDATA[ AND COLUMN_NAME = #{columnName}]]></if>
+        <if test="attributeName != null "><![CDATA[ AND ATTRIBUTE_NAME = #{attributeName}]]></if>
+        <if test="sortOrder != null "><![CDATA[ AND SORT_ORDER = #{sortOrder}]]></if>
+    </sql>
+
+    <insert id="insertCodeAttribute" keyProperty="codeAttributeId" parameterType="org.web.autobuild.domain.code.CodeAttributeDO" useGeneratedKeys="true">
+		INSERT INTO code_attribute (<include refid="all_columns"/>) VALUES
+		(
+		#{codeAttributeId},#{mark},#{columnName},#{attributeName},#{description},#{equalSupport},#{inSupport},#{compareSupport},#{indistinctSupport},#{isPrimary},#{sortOrder},#{inputTime}		
+		)
+    </insert>
+
+    <select id="queryCodeAttributeList" parameterType="org.web.autobuild.query.QueryCodeAttributeDO" resultMap="CodeAttributeDO">
+        SELECT <include refid="all_columns"/> FROM code_attribute
+		<where>
+            <include refid="query_condition"/>
+        </where>
+        <if test="orderByClause !=null"> ORDER BY ${orderByClause}</if>
+        <!-- add order or query info. -->
+		<![CDATA[
+
+		]]>
+		<if test="startNum != null"> LIMIT #{startNum},#{pageSize}</if>
+    </select>
+
+    <select id="countCodeAttributeList" parameterType="org.web.autobuild.query.QueryCodeAttributeDO" resultType="int">
+		SELECT COUNT(1) FROM code_attribute
+		<where>
+            <include refid="query_condition"/>
+        </where>
+        <!-- add order or query info. -->
+		<![CDATA[
+
+		]]>
+	</select>
+
+    <select id="queryCodeAttributeByCodeAttributeId" parameterType="long" resultMap="CodeAttributeDO">
+        SELECT <include refid="all_columns"/> FROM code_attribute WHERE CODE_ATTRIBUTE_ID = #{codeAttributeId}
+    </select>
+
+    <update id="updateCodeAttributeByCodeAttributeId" parameterType="org.web.autobuild.domain.code.CodeAttributeDO">
+        UPDATE code_attribute
+        <set>
+            <if test="mark!=null"><![CDATA[MARK=#{mark},]]></if>
+            <if test="columnName!=null"><![CDATA[COLUMN_NAME=#{columnName},]]></if>
+            <if test="attributeName!=null"><![CDATA[ATTRIBUTE_NAME=#{attributeName},]]></if>
+            <if test="description!=null"><![CDATA[DESCRIPTION=#{description},]]></if>
+            <if test="equalSupport!=null"><![CDATA[EQUAL_SUPPORT=#{equalSupport},]]></if>
+            <if test="inSupport!=null"><![CDATA[IN_SUPPORT=#{inSupport},]]></if>
+            <if test="compareSupport!=null"><![CDATA[COMPARE_SUPPORT=#{compareSupport},]]></if>
+            <if test="indistinctSupport!=null"><![CDATA[INDISTINCT_SUPPORT=#{indistinctSupport},]]></if>
+            <if test="isPrimary!=null"><![CDATA[IS_PRIMARY=#{isPrimary},]]></if>
+            <if test="sortOrder!=null"><![CDATA[SORT_ORDER=#{sortOrder},]]></if>
+            <if test="inputTime!=null"><![CDATA[INPUT_TIME=#{inputTime},]]></if>
+        </set>
+		<![CDATA[ WHERE CODE_ATTRIBUTE_ID = #{codeAttributeId}]]>
+		<if test="updateVersion != null "><![CDATA[ and updateVersion = #{updateVersion} ]]></if>
+    </update>
+
+	<delete id="deleteRecordByMark" parameterType="String">  
+        delete from code_attribute where mark = #{mark}  
+    </delete>  
+
+
+
+</mapper>
+
+
