@@ -38,7 +38,7 @@
 		<if test = "indistinct$codeAttributeDO.getUpperAttributeName() != null " ><![CDATA[ AND $column LIKE concat(concat('%',#{indistinct$codeAttributeDO.getUpperAttributeName()}),'%')]]></if>		
 #end
 #if($SUPPORT.equals($codeAttributeDO.getInSupport()))
-		<if test = "$codeAttributeDO.getAttributeName()List != null and $codeAttributeDO.getAttributeName()List.size()>0" >
+		<if test = "$codeAttributeDO.getAttributeName()List != null and $codeAttributeDO.getAttributeName()List${dot}size()!=0" >
 			AND $column IN 
 			<foreach item="item" index="index" collection="$codeAttributeDO.getAttributeName()List" open="(" separator="," close=")"> 
 			#{item} 
