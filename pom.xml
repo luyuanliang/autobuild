@@ -147,10 +147,6 @@
 		<finalName>autobuild</finalName>
 		<plugins>
 			<!-- codehaus plugin -->
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>cobertura-maven-plugin</artifactId>
-			</plugin>
 
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
