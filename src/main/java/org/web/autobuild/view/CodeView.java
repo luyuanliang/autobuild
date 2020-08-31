@@ -38,6 +38,8 @@ import org.web.autobuild.tool.ZipHelper;
 
 import com.google.gson.Gson;
 import com.google.gson.internal.LinkedTreeMap;
+import org.web.helper.PropertiesHelper;
+import org.web.helper.ServiceExceptionHelper;
 
 @Scope("prototype")
 @Controller
@@ -45,7 +47,7 @@ import com.google.gson.internal.LinkedTreeMap;
 @SuppressWarnings("restriction")
 public class CodeView {
 
-	private static Logger logger = Logger.getLogger(CodeAttributeService.class);
+	private static Logger logger = Logger.getLogger(CodeView.class);
 
 	public static final Boolean IS_WEB = Boolean.valueOf(ResourceBundle.getBundle("config/datasource", Locale.getDefault()).getString("IS_WEB"));
 
@@ -97,7 +99,8 @@ public class CodeView {
 
 		BuildCodeRequestDO buildCodeRequestDO = new BuildCodeRequestDO();
 		try {
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			String driver = PropertiesHelper.getString("config/datasource","jdbc.driverClassName");
+			Class.forName(driver).newInstance();
 			Connection connection = DriverManager.getConnection(url, user, password);
 			BuildCodeTool.buildBuildCodeRequest(buildCodeRequestDO, tableName, connection);
 
@@ -126,7 +129,8 @@ public class CodeView {
 			request.setAttribute("list", buildCodeRequestDO.getList());
 			request.setAttribute("map", buildCodeRequestDO.getMap());
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			e.printStackTrace();
+			logger.error(ServiceExceptionHelper.getExceptionInfo(e));
 		}
 		return "code/queryTableInfo";
 	}
