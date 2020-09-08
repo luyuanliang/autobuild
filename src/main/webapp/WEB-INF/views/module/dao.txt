@@ -7,9 +7,11 @@
 package $buildCodeRequest.getPackageInfoDO().getDaoPackage();
 
 import java.util.List;
+import org.apache.ibatis.annotations.Mapper;
 import $buildCodeRequest.getPackageInfoDO().getQueryPackage()$dot$upperQueryEntityName;
 import $buildCodeRequest.getPackageInfoDO().getDomainPackage()$dot$upperDomainEntityName;
 
+@Mapper
 public interface $buildCodeRequest.getEntityNameDO().getUpperDaoEntityName() {
 
 	public $upperDomainEntityName $buildCodeRequest.getEntityNameDO().getQueryByIdMethod()($buildCodeRequest.getPrimaryCodeAttributeDO().getAttributeType() $buildCodeRequest.getPrimaryCodeAttributeDO().getAttributeName());
