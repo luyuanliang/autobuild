@@ -109,7 +109,7 @@ public class PageAttributeService {
 
 	/**
 	 * @Decription 根据主键修改记录.
-	 * @param $buildCodeRequest
+	 * @param pageAttributeDO
 	 *            .getEntityName() 封装修改的对象.
 	 * @author $buildCodeRequest.getCreateUser()
 	 * @date 2016-11-30 12:50:07
