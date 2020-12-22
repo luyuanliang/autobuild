@@ -15,6 +15,7 @@ public class EntityNameDO {
 	private String countMethod;
 	private String updateMethod;
 	private String queryListMethod;
+	private String queryMapMethod;
 	private String queryByIdMethod;
 
 	public String getInsertMethod() {
@@ -123,6 +124,14 @@ public class EntityNameDO {
 
 	public String getUpperServiceEntityName() {
 		return BuildCodeTool.initUpper(serviceEntityName);
+	}
+
+	public String getQueryMapMethod() {
+		return queryMapMethod;
+	}
+
+	public void setQueryMapMethod(String queryMapMethod) {
+		this.queryMapMethod = queryMapMethod;
 	}
 
 	// public String getEntityCLassName() {

@@ -15,8 +15,10 @@
 package $buildCodeRequest.getPackageInfoDO().getServicePackage();
 
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import javax.annotation.Resource;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.apache.log4j.Logger;
 import $buildCodeRequest.getPackageInfoDO().getQueryPackage()$dot$upperQueryEntityName;
@@ -62,6 +64,29 @@ public class $buildCodeRequest.getEntityNameDO().getUpperServiceEntityName() {
 		setDefaultQuery($queryEntityName);
 		return $daoEntityName$dot$buildCodeRequest.getEntityNameDO().getQueryListMethod()( $queryEntityName );
 	}
+
+	/**
+	* @Decription 根据查询条件,返回map,map中的KEY是表的主键$buildCodeRequest.getPrimaryCodeAttributeDO().getAttributeName()$dot
+	* @param $queryEntityName 封装了查询条件对象.
+	* @author $buildCodeRequest.getOwner()
+	* @date $buildCodeRequest.getTimeValue()
+	* @return 返回一组记录，以主键做为KEY的MAP.
+	*/
+	public Map< $buildCodeRequest.getPrimaryCodeAttributeDO().getAttributeType(), $upperDomainEntityName > $buildCodeRequest.getEntityNameDO().getQueryMapMethod()($upperQueryEntityName $queryEntityName) throws ServiceException {
+
+		if ($queryEntityName == null) {
+			throw new ServiceException("PARAM_IS_EMPTY","Query is null.");
+		}
+		//TODO
+		setDefaultQuery($queryEntityName);
+		List< $upperDomainEntityName >  list = $daoEntityName$dot$buildCodeRequest.getEntityNameDO().getQueryListMethod()( $queryEntityName );
+	    Map<  $buildCodeRequest.getPrimaryCodeAttributeDO().getAttributeType(), $upperDomainEntityName > map = new HashMap<>();
+        for ( $upperDomainEntityName $domainEntityName : list) {
+            map.put($domainEntityName${dot}get$tool.initUpper($buildCodeRequest.getPrimaryCodeAttributeDO().getAttributeName())(), $domainEntityName);
+        }
+        return map;
+	}
+
 
 	/** 
 	* @Decription 根据查询条件,查询满足条件的记录数.

@@ -341,6 +341,8 @@ public class CodeView {
 		entityNameDO.setQueryByIdMethod("select" + entityNameDO.getUpperEntityName() + "By"
 				+ BuildCodeTool.initUpper(buildCodeRequestDO.getPrimaryCodeAttributeDO().getAttributeName()));
 		entityNameDO.setCountMethod("count" + entityNameDO.getUpperEntityName() + "List");
+		entityNameDO.setQueryMapMethod("select" + entityNameDO.getUpperEntityName() + "MapFor"
+				+ BuildCodeTool.initUpper(buildCodeRequestDO.getPrimaryCodeAttributeDO().getAttributeName()));
 
 		buildCodeRequestDO.setPath(outPut + File.separator);
 	}
