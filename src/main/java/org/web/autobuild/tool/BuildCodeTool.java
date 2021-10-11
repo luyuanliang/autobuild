@@ -1,11 +1,6 @@
 package org.web.autobuild.tool;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
@@ -241,13 +236,13 @@ public class BuildCodeTool {
 	public static void generateFile(List <String> list, String context, String fileName) {
 		try {
 			list.add(fileName);
-			File file = new File(fileName);
-			FileWriter fw = new FileWriter(file);
-			PrintWriter pw = new PrintWriter(fw);
-			pw.println(context);
-			pw.write("\n");
-			pw.flush();
-			pw.close();
+
+			File file =new File(fileName);
+			PrintWriter out= new PrintWriter(new BufferedWriter(new
+					OutputStreamWriter(new FileOutputStream(file ),"utf-8")));
+			out.write(context);
+			out.flush();
+			out.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
