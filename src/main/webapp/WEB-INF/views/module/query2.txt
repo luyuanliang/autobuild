@@ -9,7 +9,7 @@ package $buildCodeRequest.getPackageInfoDO().getQueryPackage();
 import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
-import org.web.basemodel.QueryBase;
+import org.web.base.domain.QueryBase;
 
 public class $upperQueryEntityName extends QueryBase {
 
