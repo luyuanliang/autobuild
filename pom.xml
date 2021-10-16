@@ -39,7 +39,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.web.base</groupId>
-			<artifactId>base-model</artifactId>
+			<artifactId>basedomain</artifactId>
 			<version>1.0.0</version>
 		</dependency>
 		<dependency>
