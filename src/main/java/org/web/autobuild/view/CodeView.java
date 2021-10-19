@@ -38,8 +38,8 @@ import org.web.autobuild.tool.ZipHelper;
 
 import com.google.gson.Gson;
 import com.google.gson.internal.LinkedTreeMap;
-import org.web.helper.PropertiesHelper;
-import org.web.helper.ServiceExceptionHelper;
+import org.web.base.helper.PropertiesHelper;
+import org.web.base.helper.ServiceExceptionHelper;
 
 @Scope("prototype")
 @Controller
