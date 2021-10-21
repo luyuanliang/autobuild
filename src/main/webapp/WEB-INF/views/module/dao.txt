@@ -14,16 +14,16 @@ import $buildCodeRequest.getPackageInfoDO().getDomainPackage()$dot$upperDomainEn
 @Mapper
 public interface $buildCodeRequest.getEntityNameDO().getUpperDaoEntityName() {
 
-	public $upperDomainEntityName $buildCodeRequest.getEntityNameDO().getQueryByIdMethod()($buildCodeRequest.getPrimaryCodeAttributeDO().getAttributeType() $buildCodeRequest.getPrimaryCodeAttributeDO().getAttributeName());
+	$upperDomainEntityName $buildCodeRequest.getEntityNameDO().getQueryByIdMethod()($buildCodeRequest.getPrimaryCodeAttributeDO().getAttributeType() $buildCodeRequest.getPrimaryCodeAttributeDO().getAttributeName());
 
-	public List< $upperDomainEntityName > $buildCodeRequest.getEntityNameDO().getQueryListMethod()($upperQueryEntityName $queryEntityName);
+	List< $upperDomainEntityName > $buildCodeRequest.getEntityNameDO().getQueryListMethod()($upperQueryEntityName $queryEntityName);
 
-	public Integer $buildCodeRequest.getEntityNameDO().getCountMethod()($upperQueryEntityName $queryEntityName);
+	Integer $buildCodeRequest.getEntityNameDO().getCountMethod()($upperQueryEntityName $queryEntityName);
 
-	public int $buildCodeRequest.getEntityNameDO().getInsertMethod()($upperDomainEntityName $domainEntityName);
+	int $buildCodeRequest.getEntityNameDO().getInsertMethod()($upperDomainEntityName $domainEntityName);
 
-	public int $buildCodeRequest.getEntityNameDO().getUpdateMethod()($upperDomainEntityName $domainEntityName);
+	int $buildCodeRequest.getEntityNameDO().getUpdateMethod()($upperDomainEntityName $domainEntityName);
 	
-	public List<String> selectDistinctList($upperQueryEntityName $queryEntityName);
+	List<String> selectDistinctList($upperQueryEntityName $queryEntityName);
 
 }
