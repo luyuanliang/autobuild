@@ -6,7 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.web.base.domain.view.ViewResult;
+import org.web.base.domain.view.ViewResultDO;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,7 +26,7 @@ public class UserView {
 	@ResponseBody
 	public String insertUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		Gson gson = new Gson();
-		ViewResult result = new ViewResult();
+		ViewResultDO result = new ViewResultDO();
 		result.setMsg("添加成功");
 		result.setResult(true);
 		result.setType("warning");
@@ -37,7 +37,7 @@ public class UserView {
 	@ResponseBody
 	public String deleteUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		Gson gson = new Gson();
-		ViewResult result = new ViewResult();
+		ViewResultDO result = new ViewResultDO();
 		result.setMsg("删除成功");
 		result.setResult(true);
 		result.setType("error");
@@ -48,7 +48,7 @@ public class UserView {
 	@ResponseBody
 	public String updateUser(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		Gson gson = new Gson();
-		ViewResult result = new ViewResult();
+		ViewResultDO result = new ViewResultDO();
 		result.setMsg("修改成功");
 		result.setResult(true);
 		result.setType("warning");

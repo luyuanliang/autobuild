@@ -24,7 +24,7 @@ import org.apache.log4j.Logger;
 import $buildCodeRequest.getPackageInfoDO().getQueryPackage()$dot$upperQueryEntityName;
 import $buildCodeRequest.getPackageInfoDO().getDomainPackage()$dot$upperDomainEntityName;
 import $buildCodeRequest.getPackageInfoDO().getDaoPackage()$dot$upperDaoEntityName;
-import org.web.exception.ServiceException;
+import org.web.base.domain.exception.ServiceException;
 
 @Service("$buildCodeRequest.getEntityNameDO().getServiceEntityName()")
 public class $buildCodeRequest.getEntityNameDO().getUpperServiceEntityName() {
