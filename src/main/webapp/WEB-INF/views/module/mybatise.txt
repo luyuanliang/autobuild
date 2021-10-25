@@ -22,10 +22,8 @@
 #end
     </resultMap>
 
-    <sql id="all_columns">#set($count=1)
-
-		#foreach ($column in $list)#if($count!=$list.size()) $column , #else$column#end#set($count=$count+1)#end
-
+    <sql id="all_columns">
+		<![CDATA[#set($count=1) #foreach ($column in $list)#if($count!=$list.size()) $column , #else$column#end#set($count=$count+1)#end ]]>
 	</sql>
 
     <sql id="query_condition">
